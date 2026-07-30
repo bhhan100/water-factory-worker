@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>水厂管家老板端</title>
+
+<style>
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
+background:#f5f7fb;
+}
+
+.header{
+background:#1677ff;
+color:white;
+padding:25px;
+border-radius:0 0 25px 25px;
+}
+
+.card{
+background:white;
+margin:15px;
+padding:20px;
+border-radius:20px;
+}
+
+.number{
+font-size:28px;
+font-weight:bold;
+color:#1677ff;
+}
+
+.item{
+border-bottom:1px solid #eee;
+padding:12px 0;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#eef6ff;
+padding:15px;
+border-radius:15px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:0;
+border-radius:12px;
+background:#1677ff;
+color:white;
+font-size:16px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+<h2>💧 水厂管家</h2>
+
+<p>老板管理后台</p>
+
+</div>
+
+
+
+
+<div class="card">
+
+
+<h3>📊 今日数据</h3>
+
+
+<div class="grid">
+
+
+<div class="stat">
+
+今日营业
+
+<div id="money" class="number">
+0
+</div>
+
+</div>
+
+
+
+<div class="stat">
+
+订单数量
+
+<div id="count" class="number">
+0
+</div>
+
+</div>
+
+
+
+<div class="stat">
+
+未收款
+
+<div id="debt" class="number">
+0
+</div>
+
+</div>
+
+
+
+<div class="stat">
+
+商品数量
+
+<div id="products" class="number">
+0
+</div>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<h3>📦 产品统计</h3>
+
+<div id="productList">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+<h3>📋 订单记录</h3>
+
+
+<div id="orders">
+
+暂无订单
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+let orders =
+JSON.parse(localStorage.getItem("orders")||"[]");
+
+
+
+
+function analysis(){
+
+
+let money=0;
+
+let debt=0;
+
+let products={
+
+瓶装水:0,
+
+普苏:0,
+
+循环桶:0,
+
+循环桶回桶:0,
+
+一次性:0,
+
+定制水:0
+
+};
+
+
+
+
+orders.forEach(o=>{
+
+
+money+=Number(o.金额);
+
+
+
+if(o.付款!="已付款"){
+
+debt+=Number(o.金额);
+
+}
+
+
+
+o.商品.forEach(p=>{
+
+
+if(products[p.product]!=undefined){
+
+products[p.product]+=Number(p.qty);
+
+}
+
+
+});
+
+
+
+});
+
+
+
+
+document.getElementById("money")
+.innerHTML="¥"+money;
+
+
+
+document.getElementById("count")
+.innerHTML=orders.length;
+
+
+
+document.getElementById("debt")
+.innerHTML="¥"+debt;
+
+
+
+document.getElementById("products")
+.innerHTML=
+Object.keys(products).length;
+
+
+
+let ph="";
+
+
+for(let p in products){
+
+ph+=`
+
+<div class="item">
+
+${p}
+
+：
+
+${products[p]}
+
+</div>
+
+`;
+
+}
+
+
+document.getElementById("productList")
+.innerHTML=ph;
+
+
+
+
+let oh="";
+
+
+
+orders.slice().reverse().forEach(o=>{
+
+
+let detail="";
+
+
+o.商品.forEach(p=>{
+
+detail+=
+p.product+
+" × "+
+p.qty+
+p.unit+
+"<br>";
+
+});
+
+
+
+oh+=`
+
+<div class="item">
+
+<b>订单号：</b>${o.编号}
+
+<br>
+
+客户：
+${o.客户}
+
+<br>
+
+工人：
+${o.工人}
+
+<br>
+
+
+商品：
+
+<br>
+
+${detail}
+
+
+金额：
+
+¥${o.金额}
+
+<br>
+
+
+付款：
+
+${o.付款}
+
+
+<br>
+
+时间：
+
+${o.时间}
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+document.getElementById("orders")
+.innerHTML=
+oh||"暂无订单";
+
+
+}
+
+
+
+analysis();
+
+
+</script>
+
+
+</body>
+</html>
