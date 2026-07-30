@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水厂管家</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
+    background:#f5f7fb;
+}
+
+.header{
+    background:#1677ff;
+    color:white;
+    padding:25px;
+    border-radius:0 0 25px 25px;
+}
+
+.card{
+    background:white;
+    margin:15px;
+    padding:20px;
+    border-radius:20px;
+}
+
+h2{
+    margin:0;
+}
+
+input,select,button{
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+button{
+    background:#1677ff;
+    color:white;
+    border:none;
+}
+
+.order{
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.menu{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.menu button{
+    background:#eaf3ff;
+    color:#1677ff;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="header">
+<h2>💧 水厂管家</h2>
+<p>工人端 V0.1</p>
+</div>
+
+
+<div class="card">
+
+<h3>👷 工人信息</h3>
+
+<input id="worker" placeholder="请输入姓名">
+
+</div>
+
+
+<div class="card">
+
+<h3>请选择操作</h3>
+
+<div class="menu">
+
+<button onclick="showForm('出库')">
+🚚 出库
+</button>
+
+<button onclick="showForm('入库')">
+📦 入库
+</button>
+
+<button onclick="showForm('回桶')">
+🪣 回桶
+</button>
+
+<button onclick="showForm('收款')">
+💰 收款
+</button>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h3 id="title">
+🚚 出库登记
+</h3>
+
+
+<input id="customer" placeholder="客户姓名">
+
+<select id="product">
+
+<option>定制水</option>
+<option>凉白水</option>
+<option>矿泉水</option>
+
+</select>
+
+
+<input id="quantity" type="number" placeholder="数量">
+
+<input id="price" type="number" placeholder="单价">
+
+
+<select id="pay">
+
+<option>已付款</option>
+<option>未付款</option>
+
+</select>
+
+
+<input id="remark" placeholder="备注">
+
+
+<button onclick="saveOrder()">
+提交订单
+</button>
+
+
+</div>
+
+
+
+<div class="card">
+
+<h3>📋 今日记录</h3>
+
+<div id="list">
+暂无记录
+</div>
+
+</div>
+
+
+
+<script>
+
+let type="出库";
+
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+
+
+function showForm(t){
+
+type=t;
+
+document.getElementById("title").innerHTML=
+"📝 "+t+"登记";
+
+}
+
+
+
+function saveOrder(){
+
+let order={
+
+worker:
+document.getElementById("worker").value,
+
+type:type,
+
+customer:
+document.getElementById("customer").value,
+
+product:
+document.getElementById("product").value,
+
+quantity:
+document.getElementById("quantity").value,
+
+price:
+document.getElementById("price").value,
+
+pay:
+document.getElementById("pay").value,
+
+remark:
+document.getElementById("remark").value,
+
+time:
+new Date().toLocaleString()
+
+};
+
+
+orders.push(order);
+
+
+localStorage.setItem(
+"orders",
+JSON.stringify(orders)
+);
+
+
+render();
+
+
+alert("保存成功");
+
+}
+
+
+
+function render(){
+
+let html="";
+
+
+orders.reverse().forEach(o=>{
+
+html+=`
+
+<div class="order">
+
+<b>${o.type}</b><br>
+
+客户：${o.customer}<br>
+
+产品：${o.product}
+${o.quantity}个<br>
+
+金额：
+${o.quantity*o.price}元<br>
+
+付款：
+${o.pay}<br>
+
+工人：
+${o.worker}<br>
+
+时间：
+${o.time}
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("list").innerHTML=
+html||"暂无记录";
+
+}
+
+
+render();
+
+
+</script>
+
+
+</body>
+</html>
