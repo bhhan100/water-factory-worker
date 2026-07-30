@@ -2,1350 +2,1030 @@
 <html lang="zh-CN">
 
 <head>
+  <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#1677ff">
 
-<title>水厂管家老板端</title>
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
 
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  >
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta
+    name="apple-mobile-web-app-title"
+    content="水厂管家"
+  >
 
+  <title>水厂管家老板端</title>
 
-<style>
+  <link rel="stylesheet" href="style.css">
 
-*{
-box-sizing:border-box;
-}
-
-
-body{
-
-margin:0;
-
-font-family:
--apple-system,
-BlinkMacSystemFont,
-"PingFang SC";
-
-background:#f5f7fb;
-
-}
-
-
-
-.header{
-
-background:#1677ff;
-
-color:white;
-
-padding:25px;
-
-border-radius:0 0 25px 25px;
-
-}
-
-
-.header h2{
-
-margin:0;
-
-}
-
-
-
-.menu{
-
-position:fixed;
-
-top:0;
-
-left:-270px;
-
-width:270px;
-
-height:100%;
-
-background:white;
-
-z-index:10;
-
-padding:25px;
-
-transition:.3s;
-
-box-shadow:2px 0 10px #aaa;
-
-}
-
-
-
-.menu.open{
-
-left:0;
-
-}
-
-
-
-.menu-item{
-
-padding:16px 0;
-
-border-bottom:1px solid #eee;
-
-}
-
-
-
-
-.mask{
-
-position:fixed;
-
-inset:0;
-
-background:#0006;
-
-display:none;
-
-z-index:5;
-
-}
-
-
-.mask.show{
-
-display:block;
-
-}
-
-
-
-
-.card{
-
-background:white;
-
-margin:15px;
-
-padding:20px;
-
-border-radius:20px;
-
-}
-
-
-
-
-.grid{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:12px;
-
-}
-
-
-
-.box{
-
-background:#eef6ff;
-
-padding:15px;
-
-border-radius:15px;
-
-}
-
-
-
-.number{
-
-font-size:26px;
-
-font-weight:bold;
-
-color:#1677ff;
-
-}
-
-
-
-button{
-
-width:100%;
-
-padding:14px;
-
-border:0;
-
-border-radius:12px;
-
-background:#1677ff;
-
-color:white;
-
-font-size:16px;
-
-}
-
-
-
-.demo{
-
-background:#52c41a;
-
-margin-top:10px;
-
-}
-
-
-
-.item{
-
-padding:12px 0;
-
-border-bottom:1px solid #eee;
-
-}
-
-
-
-.red{
-
-color:red;
-
-font-weight:bold;
-
-}
-
-
-
-canvas{
-
-max-height:260px;
-
-}
-
-
-
-</style>
-
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 
 
 <body>
 
+  <!-- 左侧菜单 -->
+  <aside
+    class="side-menu"
+    id="sideMenu"
+  >
+
+    <div class="menu-header">
+
+      <div>
+        <h2>💧 水厂管家</h2>
+        <p>老板管理中心</p>
+      </div>
+
+      <button
+        class="menu-close"
+        type="button"
+        onclick="closeMenu()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <button
+      class="menu-item"
+      type="button"
+      onclick="showPage('homePage')"
+    >
+      <span>🏠</span>
+      老板驾驶舱
+    </button>
+
+
+    <button
+      class="menu-item"
+      type="button"
+      onclick="showPage('analysisPage')"
+    >
+      <span>📊</span>
+      数据分析
+    </button>
+
+
+    <button
+      class="menu-item"
+      type="button"
+      onclick="showPage('customerPage')"
+    >
+      <span>👥</span>
+      客户管理
+    </button>
 
+
+    <button
+      class="menu-item"
+      type="button"
+      onclick="showPage('debtPage')"
+    >
+      <span>💰</span>
+      欠款管理
+    </button>
 
-<!-- 左侧菜单 -->
 
+    <button
+      class="menu-item"
+      type="button"
+      onclick="showPage('barrelPage')"
+    >
+      <span>🪣</span>
+      循环桶管理
+    </button>
 
-<div class="menu" id="menu">
 
+    <button
+      class="menu-item"
+      type="button"
+      onclick="loadDemoData()"
+    >
+      <span>🎭</span>
+      加载演示数据
+    </button>
 
-<h3>
-☰ 管理中心
-</h3>
 
+    <button
+      class="menu-item"
+      type="button"
+      onclick="exportCSV()"
+    >
+      <span>📥</span>
+      导出经营数据
+    </button>
 
+  </aside>
 
-<div class="menu-item">
 
-📊 经营分析
+  <!-- 菜单遮罩 -->
+  <div
+    class="menu-mask"
+    id="menuMask"
+    onclick="closeMenu()"
+  ></div>
 
-</div>
 
+  <!-- 顶部区域 -->
+  <header class="app-header">
 
+    <div class="header-top">
 
-<div class="menu-item">
+      <button
+        class="round-button"
+        type="button"
+        onclick="openMenu()"
+      >
+        ☰
+      </button>
 
-🥧 销售分析
 
-</div>
+      <div class="brand">
 
+        <div class="brand-icon">
+          💧
+        </div>
 
+        <div>
+          <h1>水厂管家</h1>
+          <p>老板驾驶舱 V2.0</p>
+        </div>
 
-<div class="menu-item">
+      </div>
 
-👥 客户管理
 
-</div>
+      <button
+        class="round-button"
+        type="button"
+      >
+        🔔
+      </button>
 
+    </div>
 
 
-<div class="menu-item">
+    <div class="welcome-box">
 
-💰 欠款管理
+      <p id="todayText">
+        今天
+      </p>
 
-</div>
+      <h2>
+        老板，今天生意怎么样？
+      </h2>
 
+    </div>
 
+  </header>
 
-<div class="menu-item">
 
-📦 库存管理
+  <!-- 主体 -->
+  <main class="app-main">
 
-</div>
 
+    <!-- 首页 -->
+    <section
+      class="page active-page"
+      id="homePage"
+    >
 
 
-<div class="menu-item"
-onclick="demoData()">
+      <!-- 今日营业额 -->
+      <article class="hero-card">
 
-🎭 加载演示数据
+        <div class="hero-top">
 
-</div>
+          <span>
+            今日营业额
+          </span>
 
+          <span class="live-badge">
+            实时统计
+          </span>
 
+        </div>
 
-<div class="menu-item"
-onclick="exportExcel()">
 
-📥 导出Excel
+        <strong
+          class="hero-money"
+          id="todayIncome"
+        >
+          ¥0
+        </strong>
 
-</div>
 
+        <div class="hero-bottom">
 
+          <span>
+            今天全部订单金额
+          </span>
 
-</div>
+          <span
+            class="trend-text"
+            id="incomeTrend"
+          >
+            较昨日 0%
+          </span>
 
+        </div>
 
+      </article>
 
 
+      <!-- 今日经营 -->
+      <section class="data-grid">
 
-<div class="mask" id="mask"
-onclick="closeMenu()">
 
-</div>
+        <article class="data-card blue-card">
 
+          <div class="data-card-top">
 
+            <span>
+              今日订单
+            </span>
 
+            <div class="data-icon">
+              🧾
+            </div>
 
+          </div>
 
+          <strong id="todayOrders">
+            0
+          </strong>
 
+          <small>
+            今日订单数量
+          </small>
 
-<div class="header">
+        </article>
 
 
-<h2 onclick="openMenu()">
+        <article class="data-card green-card">
 
-☰ 💧 水厂管家
+          <div class="data-card-top">
 
-</h2>
+            <span>
+              今日销量
+            </span>
 
+            <div class="data-icon">
+              🥤
+            </div>
 
-<p>
+          </div>
 
-老板数据中心 V0.4
+          <strong id="todaySales">
+            0
+          </strong>
 
-</p>
+          <small>
+            不包含回桶
+          </small>
 
+        </article>
 
-</div>
 
+        <article class="data-card orange-card">
 
+          <div class="data-card-top">
 
+            <span>
+              客户欠款
+            </span>
 
+            <div class="data-icon">
+              💳
+            </div>
 
+          </div>
 
+          <strong id="totalDebt">
+            ¥0
+          </strong>
 
+          <small>
+            未结清金额
+          </small>
 
+        </article>
 
-<div class="card">
 
+        <article class="data-card purple-card">
 
-<h3>
-📊 今日经营
-</h3>
+          <div class="data-card-top">
 
+            <span>
+              客户数量
+            </span>
 
+            <div class="data-icon">
+              👥
+            </div>
 
-<div class="grid">
+          </div>
 
+          <strong id="customerCount">
+            0
+          </strong>
 
-<div class="box">
+          <small>
+            有订单客户
+          </small>
 
-收入
+        </article>
 
-<div class="number" id="money">
+      </section>
 
-¥0
 
-</div>
+      <!-- 桶资产 -->
+      <article class="content-card">
 
-</div>
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              🪣 循环桶资产中心
+            </h3>
 
-<div class="box">
+            <p>
+              发桶、回桶和未回桶统计
+            </p>
 
-订单
+          </div>
 
-<div class="number" id="count">
 
-0
+          <button
+            class="text-button"
+            type="button"
+            onclick="showPage('barrelPage')"
+          >
+            查看详情
+          </button>
 
-</div>
+        </div>
 
-</div>
 
+        <div class="barrel-grid">
 
 
-<div class="box">
+          <div class="barrel-card">
 
-欠款
+            <span class="barrel-icon blue-icon">
+              ↑
+            </span>
 
-<div class="number" id="debt">
+            <strong id="barrelOut">
+              0
+            </strong>
 
-¥0
+            <small>
+              累计发桶
+            </small>
 
-</div>
+          </div>
 
-</div>
 
+          <div class="barrel-card">
 
+            <span class="barrel-icon green-icon">
+              ↓
+            </span>
 
-<div class="box">
+            <strong id="barrelBack">
+              0
+            </strong>
 
-销量
+            <small>
+              累计回桶
+            </small>
 
-<div class="number" id="sale">
+          </div>
 
-0
 
-</div>
+          <div class="barrel-card">
 
-</div>
+            <span class="barrel-icon orange-icon">
+              !
+            </span>
 
+            <strong id="barrelOwed">
+              0
+            </strong>
 
-</div>
+            <small>
+              未回桶
+            </small>
 
+          </div>
 
-</div>
 
+        </div>
 
+      </article>
 
 
+      <!-- 收入趋势 -->
+      <article class="content-card">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              📈 收入趋势
+            </h3>
 
-<div class="card">
+            <p>
+              最近七天营业额变化
+            </p>
 
-<h3>
-📈 收入趋势
-</h3>
+          </div>
 
+        </div>
 
-<canvas id="incomeChart">
 
-</canvas>
+        <div class="chart-box">
 
+          <canvas id="incomeChart"></canvas>
 
-</div>
+        </div>
 
+      </article>
 
 
+      <!-- 产品销售占比 -->
+      <article class="content-card">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              🥤 产品销售占比
+            </h3>
 
-<div class="card">
+            <p>
+              不包含循环桶回桶
+            </p>
 
+          </div>
 
-<h3>
-🥧 产品销售占比
-</h3>
+        </div>
 
 
-<canvas id="productChart">
+        <div class="chart-box doughnut-box">
 
-</canvas>
+          <canvas id="productChart"></canvas>
 
+        </div>
 
-</div>
+      </article>
 
 
+      <!-- 客户排行榜 -->
+      <article class="content-card">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              🏆 客户贡献排行榜
+            </h3>
 
+            <p>
+              按累计销售金额排序
+            </p>
 
+          </div>
 
-<div class="card">
 
+          <button
+            class="text-button"
+            type="button"
+            onclick="showPage('customerPage')"
+          >
+            查看全部
+          </button>
 
-<h3>
-👥 客户销售占比
-</h3>
+        </div>
 
 
-<canvas id="customerChart">
+        <div
+          class="ranking-list"
+          id="customerRanking"
+        >
 
-</canvas>
+          <div class="empty-state">
+            暂无客户数据
+          </div>
 
+        </div>
 
-</div>
+      </article>
 
 
+      <!-- 最近订单 -->
+      <article class="content-card">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              📋 最近订单
+            </h3>
 
+            <p>
+              最近五笔订单
+            </p>
 
+          </div>
 
+        </div>
 
-<div class="card">
 
+        <div id="recentOrders">
 
-<h3>
-💰 欠款排行榜
-</h3>
+          <div class="empty-state">
+            暂无订单
+          </div>
 
+        </div>
 
-<div id="debts">
+      </article>
 
-暂无
 
-</div>
+    </section>
 
 
-</div>
 
+    <!-- 数据分析页面 -->
+    <section
+      class="page"
+      id="analysisPage"
+    >
 
+      <div class="page-heading">
 
+        <div>
 
+          <h2>
+            数据分析
+          </h2>
 
+          <p>
+            查看产品、收入和客户经营情况
+          </p>
 
+        </div>
 
+      </div>
 
-<div class="card">
 
+      <article class="content-card no-side-margin">
 
-<h3>
-📋 最近订单
-</h3>
+        <div class="section-title">
 
+          <div>
 
-<div id="orders">
+            <h3>
+              📈 营业额趋势
+            </h3>
 
-暂无
+            <p>
+              最近七天收入变化
+            </p>
 
-</div>
+          </div>
 
+        </div>
 
-</div>
-<script>
 
+        <div class="chart-box">
 
-// =====================
-// 菜单
-// =====================
+          <canvas id="analysisIncomeChart"></canvas>
 
+        </div>
 
-function openMenu(){
+      </article>
 
-document
-.getElementById("menu")
-.classList.add("open");
 
+      <article class="content-card no-side-margin">
 
-document
-.getElementById("mask")
-.classList.add("show");
+        <div class="section-title">
 
+          <div>
 
-}
+            <h3>
+              🥧 产品销量结构
+            </h3>
 
+            <p>
+              各产品销量占比
+            </p>
 
+          </div>
 
-function closeMenu(){
+        </div>
 
-document
-.getElementById("menu")
-.classList.remove("open");
 
+        <div class="chart-box doughnut-box">
 
-document
-.getElementById("mask")
-.classList.remove("show");
+          <canvas id="analysisProductChart"></canvas>
 
+        </div>
 
-}
+      </article>
 
 
+      <article class="content-card no-side-margin">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              🏆 客户销售排行
+            </h3>
 
+            <p>
+              销售额最高的客户
+            </p>
 
-// =====================
-// 读取数据
-// =====================
+          </div>
 
+        </div>
 
-let orders =
 
-JSON.parse(
+        <div id="analysisCustomerRanking">
 
-localStorage.getItem("orders")
+          <div class="empty-state">
+            暂无客户数据
+          </div>
 
-|| "[]"
+        </div>
 
-);
+      </article>
 
+    </section>
 
 
 
+    <!-- 客户管理 -->
+    <section
+      class="page"
+      id="customerPage"
+    >
 
+      <div class="page-heading">
 
+        <div>
 
+          <h2>
+            客户管理
+          </h2>
 
-// =====================
-// 数据分析
-// =====================
+          <p>
+            查看客户销售、欠款和桶记录
+          </p>
 
+        </div>
 
-function analysis(){
+      </div>
 
 
+      <div class="search-box">
 
-let money=0;
+        <span>
+          🔍
+        </span>
 
-let debt=0;
+        <input
+          type="search"
+          id="customerSearch"
+          placeholder="搜索客户姓名"
+          oninput="renderCustomerPage()"
+        >
 
-let sale=0;
+      </div>
 
 
+      <div id="customerList">
 
-let products={
+        <div class="empty-state">
+          暂无客户数据
+        </div>
 
-"瓶装水":0,
+      </div>
 
-"普苏":0,
+    </section>
 
-"循环桶":0,
 
-"循环桶回桶":0,
 
-"一次性":0,
+    <!-- 欠款管理 -->
+    <section
+      class="page"
+      id="debtPage"
+    >
 
-"定制水":0
+      <div class="page-heading">
 
-};
+        <div>
 
+          <h2>
+            欠款管理
+          </h2>
 
+          <p>
+            查看所有未结清客户
+          </p>
 
-let customers={};
+        </div>
 
+      </div>
 
-let debts={};
 
+      <article class="debt-summary-card">
 
+        <span>
+          总欠款金额
+        </span>
 
+        <strong id="debtPageTotal">
+          ¥0
+        </strong>
 
+        <small>
+          全部未付款及部分付款订单
+        </small>
 
-orders.forEach(o=>{
+      </article>
 
 
-money+=Number(o.金额);
+      <article class="content-card no-side-margin">
 
+        <div class="section-title">
 
+          <div>
 
-if(o.付款!="已付款"){
+            <h3>
+              💰 欠款排行榜
+            </h3>
 
+            <p>
+              按欠款金额从高到低
+            </p>
 
-debt+=Number(o.金额);
+          </div>
 
+        </div>
 
 
-if(!debts[o.客户]){
+        <div id="debtRanking">
 
-debts[o.客户]=0;
+          <div class="empty-state">
+            暂无欠款
+          </div>
 
-}
+        </div>
 
+      </article>
 
-debts[o.客户]+=Number(o.金额);
+    </section>
 
 
-}
 
+    <!-- 循环桶页面 -->
+    <section
+      class="page"
+      id="barrelPage"
+    >
 
+      <div class="page-heading">
 
+        <div>
 
+          <h2>
+            循环桶管理
+          </h2>
 
-if(!customers[o.客户]){
+          <p>
+            查看发桶、回桶和客户欠桶情况
+          </p>
 
-customers[o.客户]=0;
+        </div>
 
-}
+      </div>
 
 
-customers[o.客户]+=Number(o.金额);
+      <section class="barrel-detail-grid">
 
 
+        <article class="barrel-detail-card">
 
+          <span>
+            累计发桶
+          </span>
 
+          <strong id="barrelPageOut">
+            0
+          </strong>
 
+          <small>
+            循环桶发出数量
+          </small>
 
-o.商品.forEach(p=>{
+        </article>
 
 
-sale+=Number(p.qty);
+        <article class="barrel-detail-card">
 
+          <span>
+            累计回桶
+          </span>
 
+          <strong id="barrelPageBack">
+            0
+          </strong>
 
-if(products[p.product]!=undefined){
+          <small>
+            循环桶回收数量
+          </small>
 
-products[p.product]+=Number(p.qty);
+        </article>
 
-}
 
+        <article class="barrel-detail-card full-card">
 
-});
+          <span>
+            当前未回桶
+          </span>
 
+          <strong id="barrelPageOwed">
+            0
+          </strong>
 
+          <small>
+            发桶减去回桶
+          </small>
 
+        </article>
 
-});
 
+      </section>
 
 
+      <article class="content-card no-side-margin">
 
+        <div class="section-title">
 
+          <div>
 
+            <h3>
+              👥 客户欠桶排行
+            </h3>
 
-document.getElementById("money")
-.innerHTML="¥"+money;
+            <p>
+              按客户未回桶数量排序
+            </p>
 
+          </div>
 
+        </div>
 
-document.getElementById("count")
-.innerHTML=orders.length;
 
+        <div id="barrelCustomerRanking">
 
+          <div class="empty-state">
+            暂无桶数据
+          </div>
 
-document.getElementById("debt")
-.innerHTML="¥"+debt;
+        </div>
 
+      </article>
 
+    </section>
 
-document.getElementById("sale")
-.innerHTML=sale;
 
+  </main>
 
 
 
+  <!-- 底部导航 -->
+  <nav class="bottom-navigation">
 
 
+    <button
+      class="nav-button active-nav"
+      type="button"
+      data-page="homePage"
+      onclick="showPage('homePage', this)"
+    >
 
-// 产品图
+      <span>
+        ⌂
+      </span>
 
+      <small>
+        首页
+      </small>
 
-new Chart(
+    </button>
 
-document.getElementById("productChart"),
 
-{
+    <button
+      class="nav-button"
+      type="button"
+      data-page="analysisPage"
+      onclick="showPage('analysisPage', this)"
+    >
 
-type:"pie",
+      <span>
+        📊
+      </span>
 
-data:{
+      <small>
+        分析
+      </small>
 
+    </button>
 
-labels:Object.keys(products),
 
+    <button
+      class="nav-button"
+      type="button"
+      data-page="customerPage"
+      onclick="showPage('customerPage', this)"
+    >
 
-datasets:[{
+      <span>
+        👥
+      </span>
 
-data:Object.values(products)
+      <small>
+        客户
+      </small>
 
-}]
+    </button>
 
 
-}
+    <button
+      class="nav-button"
+      type="button"
+      data-page="debtPage"
+      onclick="showPage('debtPage', this)"
+    >
 
-}
+      <span>
+        💰
+      </span>
 
-);
+      <small>
+        欠款
+      </small>
 
+    </button>
 
 
+    <button
+      class="nav-button"
+      type="button"
+      data-page="barrelPage"
+      onclick="showPage('barrelPage', this)"
+    >
 
+      <span>
+        🪣
+      </span>
 
+      <small>
+        回桶
+      </small>
 
+    </button>
 
 
-// 客户图
+  </nav>
 
 
-new Chart(
-
-document.getElementById("customerChart"),
-
-{
-
-type:"pie",
-
-data:{
-
-
-labels:Object.keys(customers),
-
-
-datasets:[{
-
-data:Object.values(customers)
-
-}]
-
-
-}
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-// 收入趋势
-
-
-let day={};
-
-
-
-orders.forEach(o=>{
-
-
-let d=o.时间.split(" ")[0];
-
-
-if(!day[d]){
-
-day[d]=0;
-
-}
-
-
-day[d]+=Number(o.金额);
-
-
-});
-
-
-
-
-new Chart(
-
-document.getElementById("incomeChart"),
-
-{
-
-type:"line",
-
-data:{
-
-
-labels:Object.keys(day),
-
-
-datasets:[{
-
-label:"收入",
-
-data:Object.values(day)
-
-}]
-
-}
-
-}
-
-);
-
-
-
-
-
-
-
-// 欠款
-
-
-let dh="";
-
-
-
-for(let c in debts){
-
-
-dh+=`
-
-<div class="item red">
-
-${c}
-
-欠款：
-
-¥${debts[c]}
-
-</div>
-
-`;
-
-
-}
-
-
-
-document.getElementById("debts")
-
-.innerHTML=
-
-dh||"暂无欠款";
-
-
-
-
-
-
-
-
-// 订单
-
-
-let oh="";
-
-
-
-orders.slice().reverse()
-
-.forEach(o=>{
-
-
-let goods="";
-
-
-o.商品.forEach(p=>{
-
-
-goods+=
-
-p.product+
-
-" × "+
-
-p.qty+
-
-p.unit+
-
-"<br>";
-
-
-
-});
-
-
-
-
-oh+=`
-
-<div class="item">
-
-
-客户：
-
-${o.客户}
-
-
-<br>
-
-
-商品：
-
-<br>
-
-${goods}
-
-
-金额：
-
-¥${o.金额}
-
-
-<br>
-
-
-付款：
-
-${o.付款}
-
-
-</div>
-
-`;
-
-
-
-});
-
-
-
-document.getElementById("orders")
-
-.innerHTML=
-
-oh||"暂无订单";
-
-
-
-}
-
-
-
-
-
-
-
-
-// =====================
-// 演示数据
-// =====================
-
-
-function demoData(){
-
-
-let demo=[
-
-
-["王老板",580,"未付款",
-[
-["瓶装水",5,"箱"],
-["循环桶",10,"桶"],
-["循环桶回桶",8,"桶"]
-]],
-
-
-["李老板",320,"已付款",
-[
-["普苏",8,"桶"],
-["瓶装水",2,"箱"]
-]],
-
-
-["陈经理",860,"部分付款",
-[
-["定制水",20,"包"],
-["循环桶",15,"桶"]
-]],
-
-
-["赵老板",450,"已付款",
-[
-["一次性",10,"箱"],
-["瓶装水",5,"箱"]
-]],
-
-
-["刘老板",1200,"未付款",
-[
-["循环桶",30,"桶"],
-["定制水",50,"包"]
-]],
-
-
-["周老板",260,"已付款",
-[
-["普苏",13,"桶"]
-]],
-
-
-["孙老板",780,"未付款",
-[
-["瓶装水",20,"箱"],
-["循环桶",10,"桶"]
-]],
-
-
-["吴老板",530,"已付款",
-[
-["定制水",30,"包"]
-]],
-
-
-["郑老板",980,"未付款",
-[
-["循环桶",40,"桶"]
-]],
-
-
-["陈老板",400,"已付款",
-[
-["瓶装水",10,"箱"]
-]]
-
-
-];
-
-
-
-
-
-
-let arr=[];
-
-
-
-demo.forEach((d,i)=>{
-
-
-let goods=[];
-
-let total=0;
-
-
-
-d[3].forEach(g=>{
-
-
-let amount=50;
-
-
-goods.push({
-
-product:g[0],
-
-qty:g[1],
-
-unit:g[2],
-
-price:amount,
-
-amount:amount*g[1]
-
-});
-
-
-
-total+=amount*g[1];
-
-
-});
-
-
-
-
-
-arr.push({
-
-
-编号:10001+i,
-
-
-时间:"2026-07-30 "+(9+i)+":00",
-
-
-工人:
-i%2==0?
-"李师傅":
-"张师傅",
-
-
-客户:d[0],
-
-
-商品:goods,
-
-
-金额:total,
-
-
-付款:d[2]
-
-
-
-});
-
-
-});
-
-
-
-
-
-
-
-localStorage.setItem(
-
-"orders",
-
-JSON.stringify(arr)
-
-);
-
-
-
-alert("演示数据加载成功");
-
-
-location.reload();
-
-
-
-}
-
-
-
-
-
-
-
-
-// =====================
-// Excel导出
-// =====================
-
-
-function exportExcel(){
-
-
-
-let csv=
-
-"订单号,时间,工人,客户,商品,金额,付款\n";
-
-
-
-orders.forEach(o=>{
-
-
-let g="";
-
-
-o.商品.forEach(p=>{
-
-
-g+=
-
-p.product+
-
-"×"+
-
-p.qty+
-
-p.unit+
-
-" ";
-
-
-});
-
-
-
-
-csv+=
-
-o.编号+
-
-","+
-
-o.时间+
-
-","+
-
-o.工人+
-
-","+
-
-o.客户+
-
-","+
-
-g+
-
-","+
-
-o.金额+
-
-","+
-
-o.付款+
-
-"\n";
-
-
-
-});
-
-
-
-
-
-let blob=new Blob(
-
-[
-"\ufeff"+csv
-],
-
-{
-
-type:"text/csv;charset=utf-8"
-
-}
-
-);
-
-
-
-let url=
-
-URL.createObjectURL(blob);
-
-
-
-let a=document.createElement("a");
-
-
-a.href=url;
-
-
-a.download="水厂经营日报.csv";
-
-
-a.click();
-
-
-
-}
-
-
-
-
-
-
-
-analysis();
-
-
-</script>
-
+  <script src="admin.js"></script>
 
 </body>
 
