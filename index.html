@@ -7,81 +7,76 @@
 
 <style>
 body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
-    background:#f5f7fb;
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
+background:#f5f7fb;
 }
 
 .header{
-    background:#1677ff;
-    color:white;
-    padding:25px;
-    border-radius:0 0 25px 25px;
+background:#1677ff;
+color:white;
+padding:25px;
+border-radius:0 0 25px 25px;
 }
 
 .card{
-    background:white;
-    margin:15px;
-    padding:20px;
-    border-radius:20px;
-}
-
-h2{
-    margin:0;
+background:white;
+margin:15px;
+padding:20px;
+border-radius:20px;
 }
 
 input,select,button{
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    border-radius:12px;
-    border:1px solid #ddd;
-    box-sizing:border-box;
-    font-size:16px;
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #ddd;
+box-sizing:border-box;
+font-size:16px;
 }
 
 button{
-    background:#1677ff;
-    color:white;
-    border:none;
-}
-
-.order{
-    padding:12px 0;
-    border-bottom:1px solid #eee;
+background:#1677ff;
+color:white;
+border:none;
 }
 
 .menu{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
 }
 
 .menu button{
-    background:#eaf3ff;
-    color:#1677ff;
+background:#eaf3ff;
+color:#1677ff;
 }
 
+.order{
+border-bottom:1px solid #eee;
+padding:12px 0;
+}
 </style>
 
 </head>
-
 
 <body>
 
 <div class="header">
 <h2>💧 水厂管家</h2>
-<p>工人端 V0.1</p>
+<p>工人端 V0.2</p>
 </div>
 
 
 <div class="card">
 
-<h3>👷 工人信息</h3>
+<h3>👷 工人姓名</h3>
 
 <input id="worker" placeholder="请输入姓名">
 
 </div>
+
 
 
 <div class="card">
@@ -90,21 +85,13 @@ button{
 
 <div class="menu">
 
-<button onclick="showForm('出库')">
-🚚 出库
-</button>
+<button onclick="setType('出库')">🚚 出库</button>
 
-<button onclick="showForm('入库')">
-📦 入库
-</button>
+<button onclick="setType('入库')">📦 入库</button>
 
-<button onclick="showForm('回桶')">
-🪣 回桶
-</button>
+<button onclick="setType('回桶')">🪣 回桶</button>
 
-<button onclick="showForm('收款')">
-💰 收款
-</button>
+<button onclick="setType('收款')">💰 收款</button>
 
 </div>
 
@@ -121,29 +108,63 @@ button{
 
 <input id="customer" placeholder="客户姓名">
 
+
 <select id="product">
 
+<option>瓶装水</option>
+
+<option>普苏</option>
+
+<option>循环桶</option>
+
+<option>一次性</option>
+
 <option>定制水</option>
-<option>凉白水</option>
-<option>矿泉水</option>
 
 </select>
 
 
-<input id="quantity" type="number" placeholder="数量">
 
-<input id="price" type="number" placeholder="单价">
+<select id="unit">
+
+<option>箱</option>
+
+<option>桶</option>
+
+<option>包</option>
+
+<option>个</option>
+
+</select>
+
+
+
+<input id="quantity" 
+type="number"
+placeholder="数量">
+
+
+
+<input id="price"
+type="number"
+placeholder="单价">
+
 
 
 <select id="pay">
 
 <option>已付款</option>
+
 <option>未付款</option>
+
+<option>部分付款</option>
 
 </select>
 
 
-<input id="remark" placeholder="备注">
+
+<input id="remark"
+placeholder="备注">
 
 
 <button onclick="saveOrder()">
@@ -171,51 +192,76 @@ button{
 
 let type="出库";
 
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+
+let orders=
+JSON.parse(localStorage.getItem("orders")||"[]");
 
 
-function showForm(t){
+
+function setType(t){
 
 type=t;
 
-document.getElementById("title").innerHTML=
-"📝 "+t+"登记";
+document.getElementById("title")
+.innerHTML="📝 "+t+"登记";
 
 }
 
 
 
+
 function saveOrder(){
+
 
 let order={
 
-worker:
-document.getElementById("worker").value,
 
-type:type,
+编号:
+Date.now(),
 
-customer:
-document.getElementById("customer").value,
 
-product:
-document.getElementById("product").value,
+工人:
+worker.value,
 
-quantity:
-document.getElementById("quantity").value,
 
-price:
-document.getElementById("price").value,
+类型:type,
 
-pay:
-document.getElementById("pay").value,
 
-remark:
-document.getElementById("remark").value,
+客户:
+customer.value,
 
-time:
+
+产品:
+product.value,
+
+
+单位:
+unit.value,
+
+
+数量:
+quantity.value,
+
+
+金额:
+quantity.value*price.value,
+
+
+付款:
+pay.value,
+
+
+备注:
+remark.value,
+
+
+时间:
 new Date().toLocaleString()
 
+
+
 };
+
 
 
 orders.push(order);
@@ -227,59 +273,70 @@ JSON.stringify(orders)
 );
 
 
-render();
+
+showOrders();
 
 
-alert("保存成功");
+alert("订单保存成功");
 
 }
 
 
 
-function render(){
+
+
+function showOrders(){
+
 
 let html="";
 
 
-orders.reverse().forEach(o=>{
+orders.slice().reverse()
+.forEach(o=>{
+
 
 html+=`
 
 <div class="order">
 
-<b>${o.type}</b><br>
+<b>${o.类型}</b><br>
 
-客户：${o.customer}<br>
+客户：${o.客户}<br>
 
-产品：${o.product}
-${o.quantity}个<br>
+产品：
+${o.产品}
+${o.数量}${o.单位}<br>
 
 金额：
-${o.quantity*o.price}元<br>
+${o.金额}元<br>
 
 付款：
-${o.pay}<br>
+${o.付款}<br>
 
 工人：
-${o.worker}<br>
+${o.工人}<br>
 
 时间：
-${o.time}
+${o.时间}
+
 
 </div>
 
 `;
 
+
 });
 
 
-document.getElementById("list").innerHTML=
-html||"暂无记录";
+document.getElementById("list")
+.innerHTML=html||"暂无记录";
+
 
 }
 
 
-render();
+
+showOrders();
 
 
 </script>
