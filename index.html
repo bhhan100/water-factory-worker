@@ -1,557 +1,2272 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <meta charset="UTF-8" />
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
 
-<title>水厂管家</title>
+  <meta name="theme-color" content="#1677ff" />
 
-<style>
+  <title>水厂管家｜工人送货端</title>
 
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
-background:#f5f7fb;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.header{
-background:#1677ff;
-color:white;
-padding:25px;
-border-radius:0 0 25px 25px;
-}
+    :root {
+      --primary: #1677ff;
+      --primary-light: #eaf3ff;
+      --primary-dark: #0958d9;
+      --success: #20b26b;
+      --warning: #ff9f0a;
+      --danger: #ff4d4f;
+      --text: #172033;
+      --text-light: #7b8496;
+      --border: #e9edf3;
+      --background: #f4f7fb;
+      --card: rgba(255, 255, 255, 0.96);
+      --shadow: 0 10px 30px rgba(35, 67, 120, 0.08);
+    }
 
-.card{
-background:white;
-margin:15px;
-padding:20px;
-border-radius:20px;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 110px;
+      background:
+        radial-gradient(circle at top right, #dfeeff 0, transparent 34%),
+        linear-gradient(180deg, #edf5ff 0, var(--background) 290px);
+      color: var(--text);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+    }
 
-input,select,button{
-width:100%;
-padding:13px;
-margin-top:8px;
-border-radius:12px;
-border:1px solid #ddd;
-font-size:16px;
-box-sizing:border-box;
-}
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
 
-button{
-background:#1677ff;
-color:white;
-border:none;
-}
+    button {
+      cursor: pointer;
+    }
 
-.add{
-background:#eaf3ff;
-color:#1677ff;
-}
+    .page {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+    }
 
-.item{
-border:1px solid #eee;
-padding:12px;
-border-radius:15px;
-margin-top:10px;
-}
+    .header {
+      position: relative;
+      overflow: hidden;
+      min-height: 205px;
+      padding: calc(22px + env(safe-area-inset-top)) 20px 28px;
+      color: #fff;
+      background:
+        radial-gradient(
+          circle at 86% 14%,
+          rgba(255, 255, 255, 0.32),
+          transparent 24%
+        ),
+        linear-gradient(135deg, #0d6efd, #4597ff);
+      border-radius: 0 0 32px 32px;
+      box-shadow: 0 16px 38px rgba(22, 119, 255, 0.24);
+    }
 
-.total{
-font-size:22px;
-font-weight:bold;
-color:#1677ff;
-}
+    .header::after {
+      position: absolute;
+      right: -70px;
+      bottom: -95px;
+      width: 230px;
+      height: 230px;
+      content: "";
+      border: 34px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
 
-.delete{
-background:#ff4d4f;
-padding:8px;
-margin-top:8px;
-}
+    .header-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-</style>
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
 
+    .logo {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      font-size: 26px;
+      background: rgba(255, 255, 255, 0.19);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 17px;
+      place-items: center;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: 0.4px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .date-badge {
+      padding: 8px 11px;
+      font-size: 12px;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.21);
+      border-radius: 13px;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-summary {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 24px;
+    }
+
+    .header-stat {
+      padding: 13px 10px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.19);
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+    }
+
+    .header-stat span {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    .header-stat strong {
+      font-size: 17px;
+    }
+
+    .content {
+      position: relative;
+      z-index: 5;
+      padding: 0 14px;
+      margin-top: -20px;
+    }
+
+    .card {
+      padding: 18px;
+      margin-bottom: 14px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 23px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .section-title-left {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .section-icon {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      font-size: 18px;
+      background: var(--primary-light);
+      border-radius: 12px;
+      place-items: center;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .section-title small {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4d5668;
+    }
+
+    .required::after {
+      margin-left: 3px;
+      color: var(--danger);
+      content: "*";
+    }
+
+    .input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      color: var(--text);
+      outline: none;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: 0.2s;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .input:focus,
+    select:focus,
+    textarea:focus {
+      background: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(22, 119, 255, 0.1);
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .quick-products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-bottom: 15px;
+    }
+
+    .quick-product {
+      min-height: 72px;
+      padding: 10px 5px;
+      color: #33405a;
+      background: #f7f9fc;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    .quick-product:active {
+      transform: scale(0.97);
+    }
+
+    .quick-product span {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 21px;
+    }
+
+    .quick-product strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .quick-product.return {
+      color: #118553;
+      background: #ecfbf4;
+      border-color: #c5f1dc;
+    }
+
+    .add-panel {
+      display: none;
+      padding: 15px;
+      margin-top: 12px;
+      background: #f8faff;
+      border: 1px solid #dce9ff;
+      border-radius: 18px;
+    }
+
+    .add-panel.show {
+      display: block;
+      animation: panelIn 0.22s ease-out;
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .panel-tip {
+      padding: 10px 12px;
+      margin-bottom: 13px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #52617a;
+      background: #edf4ff;
+      border-radius: 12px;
+    }
+
+    .button {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+    }
+
+    .button-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), #4096ff);
+      box-shadow: 0 8px 19px rgba(22, 119, 255, 0.23);
+    }
+
+    .button-light {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .button-success {
+      color: #fff;
+      background: linear-gradient(135deg, #18a963, #29c67b);
+    }
+
+    .button-danger-light {
+      color: var(--danger);
+      background: #fff1f0;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .empty {
+      padding: 27px 10px;
+      text-align: center;
+      color: var(--text-light);
+      background: #fafbfd;
+      border: 1px dashed #dce1ea;
+      border-radius: 16px;
+    }
+
+    .empty-icon {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .cart-item {
+      padding: 14px;
+      margin-bottom: 10px;
+      background: #fbfcfe;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+    }
+
+    .cart-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .cart-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cart-name {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .product-badge {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      font-size: 18px;
+      background: #edf4ff;
+      border-radius: 12px;
+      place-items: center;
+    }
+
+    .return-badge {
+      background: #eafbf3;
+    }
+
+    .cart-subtitle {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .remove-button {
+      padding: 7px 10px;
+      font-size: 12px;
+      color: var(--danger);
+      background: #fff1f0;
+      border: none;
+      border-radius: 10px;
+    }
+
+    .cart-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 13px;
+    }
+
+    .counter {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .counter button {
+      display: grid;
+      width: 33px;
+      height: 33px;
+      padding: 0;
+      font-size: 19px;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: none;
+      border-radius: 11px;
+      place-items: center;
+    }
+
+    .counter strong {
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .item-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .return-text {
+      color: var(--success);
+    }
+
+    .summary-box {
+      overflow: hidden;
+      background: linear-gradient(145deg, #f7faff, #eef5ff);
+      border: 1px solid #dce9ff;
+      border-radius: 19px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 15px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(218, 230, 248, 0.85);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row span {
+      color: #637087;
+    }
+
+    .summary-row strong {
+      font-size: 16px;
+    }
+
+    .summary-row.main {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .summary-row.main strong {
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .deal-wrap {
+      padding: 15px;
+      margin-top: 14px;
+      background: #fffaf0;
+      border: 1px solid #ffe4ab;
+      border-radius: 18px;
+    }
+
+    .deal-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .deal-title strong {
+      font-size: 15px;
+    }
+
+    .deal-title button {
+      padding: 5px 8px;
+      font-size: 11px;
+      color: #a56300;
+      background: #fff1d2;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .money-input-wrap {
+      position: relative;
+    }
+
+    .money-symbol {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      font-size: 20px;
+      font-weight: 700;
+      transform: translateY(-50%);
+    }
+
+    .money-input {
+      width: 100%;
+      min-height: 58px;
+      padding: 12px 14px 12px 41px;
+      font-size: 24px;
+      font-weight: 800;
+      color: #9c5b00;
+      outline: none;
+      background: #fff;
+      border: 1px solid #ffd98d;
+      border-radius: 14px;
+    }
+
+    .deal-tip {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #8a6a33;
+    }
+
+    .payment-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .payment-option {
+      min-height: 43px;
+      padding: 9px 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #687286;
+      background: #f6f8fb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .payment-option.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      border-color: #a9ccff;
+    }
+
+    .payment-option.paid.active {
+      color: #138550;
+      background: #eafaf3;
+      border-color: #a9e5c9;
+    }
+
+    .payment-option.unpaid.active {
+      color: #d33d40;
+      background: #fff0f0;
+      border-color: #ffb9ba;
+    }
+
+    .debt-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .debt-item {
+      padding: 12px;
+      text-align: center;
+      background: #f8fafc;
+      border-radius: 13px;
+    }
+
+    .debt-item span {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .debt-item strong {
+      font-size: 17px;
+    }
+
+    .debt-danger {
+      color: var(--danger);
+    }
+
+    .submit-button {
+      min-height: 56px;
+      margin-top: 16px;
+      font-size: 17px;
+    }
+
+    .order-item {
+      padding: 15px;
+      margin-bottom: 11px;
+      background: #fbfcfe;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .order-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .order-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .order-customer {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .order-time {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .status {
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 20px;
+    }
+
+    .status-paid {
+      color: #138550;
+      background: #e8faf2;
+    }
+
+    .status-partial {
+      color: #a56400;
+      background: #fff3d9;
+    }
+
+    .status-unpaid {
+      color: #d33d40;
+      background: #fff0f0;
+    }
+
+    .order-products {
+      margin: 12px 0;
+      font-size: 13px;
+      line-height: 1.75;
+      color: #505b6d;
+    }
+
+    .order-money {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      padding: 10px;
+      background: #f3f7fc;
+      border-radius: 13px;
+    }
+
+    .order-money div {
+      text-align: center;
+    }
+
+    .order-money span {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 10px;
+      color: var(--text-light);
+    }
+
+    .order-money strong {
+      font-size: 14px;
+    }
+
+    .order-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .small-delete {
+      padding: 7px 10px;
+      font-size: 11px;
+      color: var(--danger);
+      background: #fff1f0;
+      border: none;
+      border-radius: 9px;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      z-index: 50;
+      right: 12px;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      left: 12px;
+      display: flex;
+      max-width: 650px;
+      min-height: 67px;
+      padding: 7px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.91);
+      border: 1px solid rgba(225, 231, 240, 0.95);
+      border-radius: 21px;
+      box-shadow: 0 12px 40px rgba(30, 48, 77, 0.17);
+      backdrop-filter: blur(20px);
+    }
+
+    .bottom-button {
+      flex: 1;
+      padding: 6px;
+      font-size: 11px;
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      border-radius: 15px;
+    }
+
+    .bottom-button span {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 21px;
+    }
+
+    .bottom-button.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 100;
+      top: calc(24px + env(safe-area-inset-top));
+      left: 50%;
+      max-width: calc(100% - 40px);
+      padding: 12px 18px;
+      font-size: 14px;
+      color: white;
+      white-space: nowrap;
+      pointer-events: none;
+      background: rgba(27, 35, 49, 0.94);
+      border-radius: 14px;
+      opacity: 0;
+      transform: translate(-50%, -15px);
+      transition: 0.25s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 380px) {
+      .quick-products {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .header-stat strong {
+        font-size: 15px;
+      }
+    }
+  </style>
 </head>
 
-
 <body>
-
-
-<div class="header">
-
-<h2>💧 水厂管家</h2>
-
-<p>工人送货端 V0.3</p>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>👷 工人信息</h3>
-
-<input id="worker" placeholder="请输入工人姓名">
-
-
-<h3>客户</h3>
-
-<input id="customer" placeholder="客户姓名">
-
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>🚚 本次送货商品</h3>
-
-
-<div id="items">
-
-暂无商品
-
-</div>
-
-
-<button class="add" onclick="showAdd()">
-
-＋ 添加商品
-
-</button>
-
-
-</div>
-
-
-
-
-
-<div class="card" id="addBox" style="display:none">
-
-
-<h3>添加商品</h3>
-
-
-<select id="product">
-
-<option>瓶装水</option>
-
-<option>普苏</option>
-
-<option>循环桶</option>
-
-<option>循环桶回桶</option>
-
-<option>一次性</option>
-
-<option>定制水</option>
-
-</select>
-
-
-
-<select id="unit">
-
-<option>箱</option>
-
-<option>桶</option>
-
-<option>包</option>
-
-<option>个</option>
-
-</select>
-
-
-<input id="qty" type="number" placeholder="数量">
-
-
-<input id="price" type="number" placeholder="单价">
-
-
-<button onclick="addItem()">
-
-加入
-
-</button>
-
-
-</div>
-
-
-
-
-
-<div class="card">
-
-
-<h3>💰 结算</h3>
-
-
-<div id="total" class="total">
-
-应收：0 元
-
-</div>
-
-
-<select id="pay">
-
-<option>已付款</option>
-
-<option>未付款</option>
-
-<option>部分付款</option>
-
-</select>
-
-
-<input id="remark" placeholder="备注">
-
-
-<button onclick="submitOrder()">
-
-提交订单
-
-</button>
-
-
-</div>
-
-
-
-
-
-
-<div class="card">
-
-
-<h3>📋 今日订单</h3>
-
-
-<div id="orders">
-
-暂无记录
-
-</div>
-
-
-</div>
-
-
-
-
-
-<script>
-
-
-let cart=[];
-
-
-let orders=
-JSON.parse(localStorage.getItem("orders")||"[]");
-
-
-
-function showAdd(){
-
-document.getElementById("addBox").style.display="block";
-
-}
-
-
-
-
-function addItem(){
-
-
-let product=
-document.getElementById("product").value;
-
-
-let unit=
-document.getElementById("unit").value;
-
-
-let qty=
-Number(document.getElementById("qty").value);
-
-
-let price=
-Number(document.getElementById("price").value);
-
-
-
-if(!qty){
-
-alert("请输入数量");
-
-return;
-
-}
-
-
-
-let amount=qty*price;
-
-
-
-if(product=="循环桶回桶"){
-
-amount=-Math.abs(amount);
-
-}
-
-
-
-cart.push({
-
-product,
-
-unit,
-
-qty,
-
-price,
-
-amount
-
-});
-
-
-
-renderCart();
-
-
-
-}
-
-
-
-function renderCart(){
-
-
-let html="";
-
-let total=0;
-
-
-
-cart.forEach((i,index)=>{
-
-
-total+=i.amount;
-
-
-html+=`
-
-<div class="item">
-
-<b>${i.product}</b><br>
-
-数量：
-${i.qty}${i.unit}<br>
-
-单价：
-${i.price}元<br>
-
-金额：
-${i.amount}元
-
-
-<button class="delete"
-onclick="removeItem(${index})">
-
-删除
-
-</button>
-
-
-</div>
-
-
-`;
-
-
-});
-
-
-
-document.getElementById("items").innerHTML=
-html||"暂无商品";
-
-
-document.getElementById("total").innerHTML=
-"应收："+total+" 元";
-
-
-}
-
-
-
-
-function removeItem(index){
-
-cart.splice(index,1);
-
-renderCart();
-
-}
-
-
-
-
-function submitOrder(){
-
-
-
-if(cart.length==0){
-
-alert("请添加商品");
-
-return;
-
-}
-
-
-
-let total=0;
-
-
-cart.forEach(i=>{
-
-total+=i.amount;
-
-});
-
-
-
-let order={
-
-
-编号:Date.now(),
-
-
-时间:new Date().toLocaleString(),
-
-
-工人:
-document.getElementById("worker").value,
-
-
-客户:
-document.getElementById("customer").value,
-
-
-商品:
-cart,
-
-
-金额:total,
-
-
-付款:
-document.getElementById("pay").value,
-
-
-备注:
-document.getElementById("remark").value
-
-
-
-};
-
-
-
-orders.push(order);
-
-
-
-localStorage.setItem(
-
-"orders",
-
-JSON.stringify(orders)
-
-);
-
-
-
-alert("订单提交成功");
-
-
-
-cart=[];
-
-
-renderCart();
-
-showOrders();
-
-
-}
-
-
-
-
-function showOrders(){
-
-
-let html="";
-
-
-orders.slice().reverse().forEach(o=>{
-
-
-html+=`
-
-<div class="item">
-
-订单：
-${o.编号}<br>
-
-客户：
-${o.客户}<br>
-
-金额：
-${o.金额}元<br>
-
-付款：
-${o.付款}<br>
-
-时间：
-${o.时间}
-
-
-</div>
-
-
-`;
-
-
-
-});
-
-
-
-document.getElementById("orders").innerHTML=
-
-html||"暂无记录";
-
-
-}
-
-
-
-showOrders();
-
-
-</script>
-
-
+  <div class="page">
+    <header class="header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="logo">💧</div>
+
+          <div>
+            <h1>水厂管家</h1>
+            <p>工人送货端 V2.0</p>
+          </div>
+        </div>
+
+        <div class="date-badge" id="todayDate">今天</div>
+      </div>
+
+      <div class="header-summary">
+        <div class="header-stat">
+          <span>今日订单</span>
+          <strong id="todayOrderCount">0 单</strong>
+        </div>
+
+        <div class="header-stat">
+          <span>今日成交</span>
+          <strong id="todaySales">¥0</strong>
+        </div>
+
+        <div class="header-stat">
+          <span>今日实收</span>
+          <strong id="todayReceived">¥0</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="card" id="orderSection">
+        <div class="section-title">
+          <div class="section-title-left">
+            <div class="section-icon">👷</div>
+
+            <div>
+              <h2>送货信息</h2>
+              <small>填写工人和客户</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="required" for="worker">工人姓名</label>
+
+          <input
+            id="worker"
+            class="input"
+            type="text"
+            placeholder="例如：张师傅"
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="field">
+          <label class="required" for="customer">客户名称</label>
+
+          <input
+            id="customer"
+            class="input"
+            type="text"
+            placeholder="例如：鑫源超市"
+          />
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div class="section-title-left">
+            <div class="section-icon">🚚</div>
+
+            <div>
+              <h2>本次送货商品</h2>
+              <small>可同时添加多种水</small>
+            </div>
+          </div>
+
+          <small id="itemCountText">0 项</small>
+        </div>
+
+        <div class="quick-products">
+          <button
+            class="quick-product"
+            type="button"
+            onclick="openAddPanel('瓶装水')"
+          >
+            <span>🧴</span>
+            <strong>瓶装水</strong>
+          </button>
+
+          <button
+            class="quick-product"
+            type="button"
+            onclick="openAddPanel('普苏')"
+          >
+            <span>📦</span>
+            <strong>普苏</strong>
+          </button>
+
+          <button
+            class="quick-product"
+            type="button"
+            onclick="openAddPanel('循环桶')"
+          >
+            <span>🪣</span>
+            <strong>循环桶</strong>
+          </button>
+
+          <button
+            class="quick-product return"
+            type="button"
+            onclick="openAddPanel('循环桶回桶')"
+          >
+            <span>↩️</span>
+            <strong>循环桶回桶</strong>
+          </button>
+
+          <button
+            class="quick-product"
+            type="button"
+            onclick="openAddPanel('一次性')"
+          >
+            <span>💧</span>
+            <strong>一次性</strong>
+          </button>
+
+          <button
+            class="quick-product"
+            type="button"
+            onclick="openAddPanel('定制水')"
+          >
+            <span>✨</span>
+            <strong>定制水</strong>
+          </button>
+        </div>
+
+        <div id="cartList">
+          <div class="empty">
+            <div class="empty-icon">🛒</div>
+            暂未添加商品
+          </div>
+        </div>
+
+        <div class="add-panel" id="addPanel">
+          <div class="panel-tip">
+            商品单价可以不填。遇到多种水统一收款时，只填写数量，最后在结算区填写整单成交金额即可。
+          </div>
+
+          <div class="field">
+            <label for="product">商品</label>
+
+            <select id="product" onchange="handleProductChange()">
+              <option value="瓶装水">瓶装水</option>
+              <option value="普苏">普苏</option>
+              <option value="循环桶">循环桶</option>
+              <option value="循环桶回桶">循环桶回桶</option>
+              <option value="一次性">一次性</option>
+              <option value="定制水">定制水</option>
+            </select>
+          </div>
+
+          <div class="two-column">
+            <div class="field">
+              <label class="required" for="qty">数量</label>
+
+              <input
+                id="qty"
+                class="input"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                step="1"
+                placeholder="例如：10"
+              />
+            </div>
+
+            <div class="field">
+              <label for="unit">单位</label>
+
+              <select id="unit">
+                <option value="桶">桶</option>
+                <option value="箱">箱</option>
+                <option value="包">包</option>
+                <option value="个">个</option>
+                <option value="瓶">瓶</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field" id="priceField">
+            <label for="price">参考单价（可以不填）</label>
+
+            <input
+              id="price"
+              class="input"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="例如：12"
+            />
+          </div>
+
+          <div class="button-row">
+            <button
+              class="button button-light"
+              type="button"
+              onclick="closeAddPanel()"
+            >
+              取消
+            </button>
+
+            <button
+              class="button button-primary"
+              type="button"
+              onclick="addItem()"
+            >
+              加入本单
+            </button>
+          </div>
+        </div>
+
+        <button
+          class="button button-light"
+          id="normalAddButton"
+          type="button"
+          onclick="openAddPanel()"
+          style="margin-top: 13px"
+        >
+          ＋ 添加其他商品
+        </button>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div class="section-title-left">
+            <div class="section-icon">💰</div>
+
+            <div>
+              <h2>本单结算</h2>
+              <small>多种水可以统一填写总金额</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-box">
+          <div class="summary-row">
+            <span>商品种类</span>
+            <strong id="summaryItemCount">0 项</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>送货数量</span>
+            <strong id="summaryDeliveryQty">0</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>循环桶回桶</span>
+            <strong class="return-text" id="summaryReturnQty">0 个</strong>
+          </div>
+
+          <div class="summary-row main">
+            <span>参考金额</span>
+            <strong id="theoreticalAmount">¥0.00</strong>
+          </div>
+        </div>
+
+        <div class="deal-wrap">
+          <div class="deal-title">
+            <strong>本单成交金额</strong>
+
+            <button type="button" onclick="useTheoreticalAmount()">
+              使用参考金额
+            </button>
+          </div>
+
+          <div class="money-input-wrap">
+            <span class="money-symbol">¥</span>
+
+            <input
+              id="dealAmount"
+              class="money-input"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              oninput="handleDealAmountInput()"
+            />
+          </div>
+
+          <div class="deal-tip">
+            例如多种水最后一共收 300 元，这里直接填写 300，不需要给每一种水单独分配金额。
+          </div>
+        </div>
+
+        <div class="payment-options">
+          <button
+            class="payment-option paid active"
+            id="paidButton"
+            type="button"
+            onclick="selectPayment('paid')"
+          >
+            已付款
+          </button>
+
+          <button
+            class="payment-option"
+            id="partialButton"
+            type="button"
+            onclick="selectPayment('partial')"
+          >
+            部分付款
+          </button>
+
+          <button
+            class="payment-option unpaid"
+            id="unpaidButton"
+            type="button"
+            onclick="selectPayment('unpaid')"
+          >
+            未付款
+          </button>
+        </div>
+
+        <div class="field" id="receivedField">
+          <label for="receivedAmount">本次实收金额</label>
+
+          <input
+            id="receivedAmount"
+            class="input"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            placeholder="请输入实际收到的钱"
+            oninput="updateSettlement()"
+          />
+        </div>
+
+        <div class="debt-box">
+          <div class="debt-item">
+            <span>本次实收</span>
+            <strong id="receivedPreview">¥0.00</strong>
+          </div>
+
+          <div class="debt-item">
+            <span>本单欠款</span>
+            <strong class="debt-danger" id="debtPreview">¥0.00</strong>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 14px">
+          <label for="remark">备注</label>
+
+          <textarea
+            id="remark"
+            placeholder="例如：老板统一结算、优惠20元、下次一起付款"
+          ></textarea>
+        </div>
+
+        <button
+          class="button button-success submit-button"
+          type="button"
+          onclick="submitOrder()"
+        >
+          确认并提交订单
+        </button>
+      </section>
+
+      <section class="card" id="todaySection">
+        <div class="section-title">
+          <div class="section-title-left">
+            <div class="section-icon">📋</div>
+
+            <div>
+              <h2>今日订单</h2>
+              <small>仅显示今天提交的记录</small>
+            </div>
+          </div>
+
+          <small id="todayListCount">0 单</small>
+        </div>
+
+        <div id="ordersList">
+          <div class="empty">
+            <div class="empty-icon">📄</div>
+            今日暂无订单
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-bar">
+    <button
+      class="bottom-button active"
+      id="bottomOrderButton"
+      type="button"
+      onclick="scrollToOrder()"
+    >
+      <span>🚚</span>
+      开单
+    </button>
+
+    <button
+      class="bottom-button"
+      id="bottomTodayButton"
+      type="button"
+      onclick="scrollToToday()"
+    >
+      <span>📋</span>
+      今日订单
+    </button>
+
+    <button
+      class="bottom-button"
+      type="button"
+      onclick="openBossPage()"
+    >
+      <span>📊</span>
+      老板端
+    </button>
+  </nav>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    const STORAGE_KEY = "orders";
+    const WORKER_KEY = "waterFactoryWorkerName";
+
+    const PRODUCT_ICONS = {
+      瓶装水: "🧴",
+      普苏: "📦",
+      循环桶: "🪣",
+      循环桶回桶: "↩️",
+      一次性: "💧",
+      定制水: "✨"
+    };
+
+    const DEFAULT_UNITS = {
+      瓶装水: "箱",
+      普苏: "箱",
+      循环桶: "桶",
+      循环桶回桶: "桶",
+      一次性: "桶",
+      定制水: "箱"
+    };
+
+    let cart = [];
+    let selectedPayment = "paid";
+    let dealAmountManuallyEdited = false;
+
+    let orders = loadOrders();
+
+    function loadOrders() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(saved) ? saved : [];
+      } catch (error) {
+        console.error("订单数据读取失败：", error);
+        return [];
+      }
+    }
+
+    function saveOrders() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    }
+
+    function formatMoney(value) {
+      const number = Number(value) || 0;
+
+      return "¥" + number.toFixed(2);
+    }
+
+    function roundMoney(value) {
+      return Math.round((Number(value) || 0) * 100) / 100;
+    }
+
+    function getDateKey(dateValue = new Date()) {
+      const date = new Date(dateValue);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function getTodayOrders() {
+      const todayKey = getDateKey();
+
+      return orders.filter((order) => {
+        const rawDate =
+          order.createdAt ||
+          order.timestamp ||
+          order.date ||
+          order.时间 ||
+          "";
+
+        const date = new Date(rawDate);
+
+        if (!Number.isNaN(date.getTime())) {
+          return getDateKey(date) === todayKey;
+        }
+
+        return String(rawDate).includes(
+          new Date().toLocaleDateString("zh-CN")
+        );
+      });
+    }
+
+    function initializePage() {
+      const now = new Date();
+
+      document.getElementById("todayDate").textContent =
+        `${now.getMonth() + 1}月${now.getDate()}日`;
+
+      const savedWorker = localStorage.getItem(WORKER_KEY);
+
+      if (savedWorker) {
+        document.getElementById("worker").value = savedWorker;
+      }
+
+      document
+        .getElementById("worker")
+        .addEventListener("input", function () {
+          localStorage.setItem(WORKER_KEY, this.value.trim());
+        });
+
+      renderCart();
+      renderTodayOrders();
+      updateHeaderSummary();
+      updateSettlement();
+    }
+
+    function openAddPanel(productName) {
+      const panel = document.getElementById("addPanel");
+
+      if (productName) {
+        document.getElementById("product").value = productName;
+      }
+
+      handleProductChange();
+
+      panel.classList.add("show");
+
+      setTimeout(() => {
+        document.getElementById("qty").focus();
+      }, 180);
+    }
+
+    function closeAddPanel() {
+      document.getElementById("addPanel").classList.remove("show");
+
+      document.getElementById("qty").value = "";
+      document.getElementById("price").value = "";
+    }
+
+    function handleProductChange() {
+      const product = document.getElementById("product").value;
+      const unit = DEFAULT_UNITS[product] || "桶";
+
+      document.getElementById("unit").value = unit;
+
+      const isReturn = product === "循环桶回桶";
+
+      document
+        .getElementById("priceField")
+        .classList.toggle("hidden", isReturn);
+
+      if (isReturn) {
+        document.getElementById("price").value = "";
+      }
+    }
+
+    function addItem() {
+      const product = document.getElementById("product").value;
+      const unit = document.getElementById("unit").value;
+      const qty = Number(document.getElementById("qty").value);
+      const price = Number(document.getElementById("price").value) || 0;
+
+      if (!qty || qty <= 0) {
+        showToast("请输入正确的商品数量");
+        return;
+      }
+
+      const isReturn = product === "循环桶回桶";
+
+      const existingItem = cart.find(
+        (item) =>
+          item.product === product &&
+          item.unit === unit &&
+          Number(item.price) === Number(isReturn ? 0 : price)
+      );
+
+      if (existingItem) {
+        existingItem.qty += qty;
+        existingItem.quantity = existingItem.qty;
+        existingItem.数量 = existingItem.qty;
+
+        existingItem.amount = roundMoney(
+          existingItem.qty * existingItem.price
+        );
+
+        existingItem.金额 = existingItem.amount;
+      } else {
+        const itemPrice = isReturn ? 0 : price;
+        const amount = roundMoney(qty * itemPrice);
+
+        cart.push({
+          product: product,
+          name: product,
+          产品: product,
+
+          unit: unit,
+          单位: unit,
+
+          qty: qty,
+          quantity: qty,
+          数量: qty,
+
+          price: itemPrice,
+          单价: itemPrice,
+
+          amount: amount,
+          金额: amount,
+
+          isReturn: isReturn
+        });
+      }
+
+      renderCart();
+      closeAddPanel();
+      showToast(`${product}已加入本单`);
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function changeQty(index, change) {
+      if (!cart[index]) {
+        return;
+      }
+
+      cart[index].qty += change;
+
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      } else {
+        cart[index].quantity = cart[index].qty;
+        cart[index].数量 = cart[index].qty;
+
+        cart[index].amount = roundMoney(
+          cart[index].qty * cart[index].price
+        );
+
+        cart[index].金额 = cart[index].amount;
+      }
+
+      renderCart();
+    }
+
+    function getTheoreticalTotal() {
+      return roundMoney(
+        cart.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      );
+    }
+
+    function getDeliveryQty() {
+      return cart
+        .filter((item) => item.product !== "循环桶回桶")
+        .reduce((sum, item) => sum + Number(item.qty || 0), 0);
+    }
+
+    function getReturnQty() {
+      return cart
+        .filter((item) => item.product === "循环桶回桶")
+        .reduce((sum, item) => sum + Number(item.qty || 0), 0);
+    }
+
+    function renderCart() {
+      const cartList = document.getElementById("cartList");
+
+      if (cart.length === 0) {
+        cartList.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">🛒</div>
+            暂未添加商品
+          </div>
+        `;
+      } else {
+        cartList.innerHTML = cart
+          .map((item, index) => {
+            const isReturn = item.product === "循环桶回桶";
+
+            const amountText = isReturn
+              ? "不计金额"
+              : item.price > 0
+              ? `${formatMoney(item.amount)}`
+              : "整单统一结算";
+
+            const priceText = isReturn
+              ? "回桶记录"
+              : item.price > 0
+              ? `参考单价 ${formatMoney(item.price)}`
+              : "未填写单价";
+
+            return `
+              <div class="cart-item">
+                <div class="cart-top">
+                  <div class="cart-name">
+                    <div class="product-badge ${
+                      isReturn ? "return-badge" : ""
+                    }">
+                      ${PRODUCT_ICONS[item.product] || "💧"}
+                    </div>
+
+                    <div>
+                      ${escapeHtml(item.product)}
+
+                      <div class="cart-subtitle">
+                        ${priceText}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    class="remove-button"
+                    type="button"
+                    onclick="removeItem(${index})"
+                  >
+                    删除
+                  </button>
+                </div>
+
+                <div class="cart-bottom">
+                  <div class="counter">
+                    <button
+                      type="button"
+                      onclick="changeQty(${index}, -1)"
+                    >
+                      −
+                    </button>
+
+                    <strong>
+                      ${item.qty}${escapeHtml(item.unit)}
+                    </strong>
+
+                    <button
+                      type="button"
+                      onclick="changeQty(${index}, 1)"
+                    >
+                      ＋
+                    </button>
+                  </div>
+
+                  <div class="item-amount ${
+                    isReturn ? "return-text" : ""
+                  }">
+                    ${amountText}
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      const theoreticalTotal = getTheoreticalTotal();
+
+      document.getElementById(
+        "itemCountText"
+      ).textContent = `${cart.length} 项`;
+
+      document.getElementById(
+        "summaryItemCount"
+      ).textContent = `${cart.length} 项`;
+
+      document.getElementById(
+        "summaryDeliveryQty"
+      ).textContent = getDeliveryQty();
+
+      document.getElementById(
+        "summaryReturnQty"
+      ).textContent = `${getReturnQty()} 个`;
+
+      document.getElementById(
+        "theoreticalAmount"
+      ).textContent = formatMoney(theoreticalTotal);
+
+      if (!dealAmountManuallyEdited) {
+        document.getElementById("dealAmount").value =
+          theoreticalTotal > 0 ? theoreticalTotal : "";
+      }
+
+      updateSettlement();
+    }
+
+    function handleDealAmountInput() {
+      dealAmountManuallyEdited = true;
+
+      if (selectedPayment === "paid") {
+        document.getElementById("receivedAmount").value =
+          document.getElementById("dealAmount").value;
+      }
+
+      updateSettlement();
+    }
+
+    function useTheoreticalAmount() {
+      const theoreticalTotal = getTheoreticalTotal();
+
+      document.getElementById("dealAmount").value =
+        theoreticalTotal > 0 ? theoreticalTotal : "";
+
+      dealAmountManuallyEdited = false;
+
+      if (selectedPayment === "paid") {
+        document.getElementById("receivedAmount").value =
+          theoreticalTotal > 0 ? theoreticalTotal : "";
+      }
+
+      updateSettlement();
+      showToast("已使用参考金额");
+    }
+
+    function selectPayment(type) {
+      selectedPayment = type;
+
+      document
+        .getElementById("paidButton")
+        .classList.toggle("active", type === "paid");
+
+      document
+        .getElementById("partialButton")
+        .classList.toggle("active", type === "partial");
+
+      document
+        .getElementById("unpaidButton")
+        .classList.toggle("active", type === "unpaid");
+
+      const dealAmount =
+        Number(document.getElementById("dealAmount").value) || 0;
+
+      const receivedInput =
+        document.getElementById("receivedAmount");
+
+      if (type === "paid") {
+        receivedInput.value = dealAmount || "";
+        receivedInput.disabled = true;
+      } else if (type === "unpaid") {
+        receivedInput.value = 0;
+        receivedInput.disabled = true;
+      } else {
+        receivedInput.disabled = false;
+
+        if (
+          Number(receivedInput.value) >= dealAmount ||
+          Number(receivedInput.value) <= 0
+        ) {
+          receivedInput.value = "";
+        }
+
+        setTimeout(() => receivedInput.focus(), 100);
+      }
+
+      updateSettlement();
+    }
+
+    function updateSettlement() {
+      const dealAmount =
+        Number(document.getElementById("dealAmount").value) || 0;
+
+      const receivedInput =
+        document.getElementById("receivedAmount");
+
+      if (selectedPayment === "paid") {
+        receivedInput.disabled = true;
+        receivedInput.value = dealAmount > 0 ? dealAmount : "";
+      }
+
+      if (selectedPayment === "unpaid") {
+        receivedInput.disabled = true;
+        receivedInput.value = 0;
+      }
+
+      if (selectedPayment === "partial") {
+        receivedInput.disabled = false;
+      }
+
+      let receivedAmount = Number(receivedInput.value) || 0;
+
+      if (receivedAmount > dealAmount && dealAmount >= 0) {
+        receivedAmount = dealAmount;
+        receivedInput.value = dealAmount;
+      }
+
+      const debtAmount = Math.max(
+        0,
+        roundMoney(dealAmount - receivedAmount)
+      );
+
+      document.getElementById(
+        "receivedPreview"
+      ).textContent = formatMoney(receivedAmount);
+
+      document.getElementById(
+        "debtPreview"
+      ).textContent = formatMoney(debtAmount);
+    }
+
+    function submitOrder() {
+      const worker = document.getElementById("worker").value.trim();
+      const customer = document
+        .getElementById("customer")
+        .value.trim();
+
+      if (!worker) {
+        showToast("请填写工人姓名");
+        document.getElementById("worker").focus();
+        return;
+      }
+
+      if (!customer) {
+        showToast("请填写客户名称");
+        document.getElementById("customer").focus();
+        return;
+      }
+
+      if (cart.length === 0) {
+        showToast("请至少添加一种商品");
+        return;
+      }
+
+      const theoreticalAmount = getTheoreticalTotal();
+
+      const dealAmount =
+        Number(document.getElementById("dealAmount").value) || 0;
+
+      if (dealAmount < 0) {
+        showToast("成交金额不能小于0");
+        return;
+      }
+
+      let receivedAmount =
+        Number(document.getElementById("receivedAmount").value) || 0;
+
+      if (selectedPayment === "paid") {
+        receivedAmount = dealAmount;
+      }
+
+      if (selectedPayment === "unpaid") {
+        receivedAmount = 0;
+      }
+
+      if (
+        selectedPayment === "partial" &&
+        (receivedAmount <= 0 || receivedAmount >= dealAmount)
+      ) {
+        showToast("部分付款金额应大于0且小于成交金额");
+        return;
+      }
+
+      const outstandingAmount = Math.max(
+        0,
+        roundMoney(dealAmount - receivedAmount)
+      );
+
+      let paymentStatus = "paid";
+      let paymentLabel = "已付款";
+
+      if (outstandingAmount >= dealAmount && dealAmount > 0) {
+        paymentStatus = "unpaid";
+        paymentLabel = "未付款";
+      } else if (outstandingAmount > 0) {
+        paymentStatus = "partial";
+        paymentLabel = "部分付款";
+      }
+
+      const now = new Date();
+      const orderId = Date.now();
+
+      const orderItems = cart.map((item) => ({
+        ...item
+      }));
+
+      /*
+        同时保存中英文字段：
+        这样旧版老板端和新版老板端都更容易读取。
+      */
+      const order = {
+        id: orderId,
+        orderNo: orderId,
+        编号: orderId,
+
+        createdAt: now.toISOString(),
+        timestamp: now.toISOString(),
+        date: now.toISOString(),
+        时间: now.toLocaleString("zh-CN"),
+
+        workerName: worker,
+        worker: worker,
+        工人: worker,
+
+        customerName: customer,
+        customer: customer,
+        客户: customer,
+
+        items: orderItems,
+        products: orderItems,
+        商品: orderItems,
+
+        theoreticalAmount: theoreticalAmount,
+        referenceAmount: theoreticalAmount,
+        参考金额: theoreticalAmount,
+
+        totalAmount: roundMoney(dealAmount),
+        dealAmount: roundMoney(dealAmount),
+        金额: roundMoney(dealAmount),
+
+        receivedAmount: roundMoney(receivedAmount),
+        paidAmount: roundMoney(receivedAmount),
+        实收: roundMoney(receivedAmount),
+
+        outstandingAmount: outstandingAmount,
+        debtAmount: outstandingAmount,
+        欠款: outstandingAmount,
+
+        paymentStatus: paymentStatus,
+        payment: paymentLabel,
+        付款: paymentLabel,
+
+        deliveryQuantity: getDeliveryQty(),
+        returnBarrelQuantity: getReturnQty(),
+
+        remark: document.getElementById("remark").value.trim(),
+        备注: document.getElementById("remark").value.trim()
+      };
+
+      orders.push(order);
+      saveOrders();
+
+      localStorage.setItem(WORKER_KEY, worker);
+
+      showToast("订单提交成功");
+
+      cart = [];
+      dealAmountManuallyEdited = false;
+      selectedPayment = "paid";
+
+      document.getElementById("customer").value = "";
+      document.getElementById("remark").value = "";
+      document.getElementById("dealAmount").value = "";
+      document.getElementById("receivedAmount").value = "";
+
+      selectPayment("paid");
+      renderCart();
+      renderTodayOrders();
+      updateHeaderSummary();
+
+      setTimeout(() => {
+        document
+          .getElementById("orderSection")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        document.getElementById("customer").focus();
+      }, 300);
+    }
+
+    function renderTodayOrders() {
+      const todayOrders = getTodayOrders().slice().reverse();
+      const list = document.getElementById("ordersList");
+
+      document.getElementById(
+        "todayListCount"
+      ).textContent = `${todayOrders.length} 单`;
+
+      if (todayOrders.length === 0) {
+        list.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">📄</div>
+            今日暂无订单
+          </div>
+        `;
+
+        return;
+      }
+
+      list.innerHTML = todayOrders
+        .map((order) => {
+          const id =
+            order.id ||
+            order.orderNo ||
+            order.编号;
+
+          const customer =
+            order.customerName ||
+            order.customer ||
+            order.客户 ||
+            "未填写客户";
+
+          const items =
+            order.items ||
+            order.products ||
+            order.商品 ||
+            [];
+
+          const totalAmount = Number(
+            order.totalAmount ??
+              order.dealAmount ??
+              order.金额 ??
+              0
+          );
+
+          const receivedAmount = Number(
+            order.receivedAmount ??
+              order.paidAmount ??
+              order.实收 ??
+              (order.付款 === "已付款" ? totalAmount : 0)
+          );
+
+          const outstandingAmount = Number(
+            order.outstandingAmount ??
+              order.debtAmount ??
+              order.欠款 ??
+              Math.max(0, totalAmount - receivedAmount)
+          );
+
+          const status =
+            order.paymentStatus ||
+            normalizePaymentStatus(order.付款);
+
+          const statusLabel =
+            status === "paid"
+              ? "已付款"
+              : status === "partial"
+              ? "部分付款"
+              : "未付款";
+
+          const statusClass =
+            status === "paid"
+              ? "status-paid"
+              : status === "partial"
+              ? "status-partial"
+              : "status-unpaid";
+
+          const itemText = items
+            .map((item) => {
+              const product =
+                item.product ||
+                item.name ||
+                item.产品 ||
+                "商品";
+
+              const qty =
+                item.qty ??
+                item.quantity ??
+                item.数量 ??
+                0;
+
+              const unit =
+                item.unit ||
+                item.单位 ||
+                "";
+
+              return `${escapeHtml(product)} ${qty}${escapeHtml(unit)}`;
+            })
+            .join("、");
+
+          const timeText =
+            order.时间 ||
+            formatDateTime(
+              order.createdAt ||
+                order.timestamp ||
+                order.date
+            );
+
+          return `
+            <div class="order-item">
+              <div class="order-head">
+                <div>
+                  <div class="order-customer">
+                    ${escapeHtml(customer)}
+                  </div>
+
+                  <div class="order-time">
+                    ${escapeHtml(timeText)}
+                  </div>
+                </div>
+
+                <span class="status ${statusClass}">
+                  ${statusLabel}
+                </span>
+              </div>
+
+              <div class="order-products">
+                ${itemText || "暂无商品明细"}
+              </div>
+
+              <div class="order-money">
+                <div>
+                  <span>成交</span>
+                  <strong>${formatMoney(totalAmount)}</strong>
+                </div>
+
+                <div>
+                  <span>实收</span>
+                  <strong>${formatMoney(receivedAmount)}</strong>
+                </div>
+
+                <div>
+                  <span>欠款</span>
+                  <strong class="${
+                    outstandingAmount > 0 ? "debt-danger" : ""
+                  }">
+                    ${formatMoney(outstandingAmount)}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="order-actions">
+                <button
+                  class="small-delete"
+                  type="button"
+                  onclick="deleteOrder('${String(id)}')"
+                >
+                  删除错误订单
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function normalizePaymentStatus(paymentValue) {
+      if (
+        paymentValue === "已付款" ||
+        paymentValue === "paid"
+      ) {
+        return "paid";
+      }
+
+      if (
+        paymentValue === "部分付款" ||
+        paymentValue === "partial"
+      ) {
+        return "partial";
+      }
+
+      return "unpaid";
+    }
+
+    function updateHeaderSummary() {
+      const todayOrders = getTodayOrders();
+
+      const todaySales = todayOrders.reduce((sum, order) => {
+        return (
+          sum +
+          Number(
+            order.totalAmount ??
+              order.dealAmount ??
+              order.金额 ??
+              0
+          )
+        );
+      }, 0);
+
+      const todayReceived = todayOrders.reduce((sum, order) => {
+        const total = Number(
+          order.totalAmount ??
+            order.dealAmount ??
+            order.金额 ??
+            0
+        );
+
+        const received = Number(
+          order.receivedAmount ??
+            order.paidAmount ??
+            order.实收 ??
+            (order.付款 === "已付款" ? total : 0)
+        );
+
+        return sum + received;
+      }, 0);
+
+      document.getElementById(
+        "todayOrderCount"
+      ).textContent = `${todayOrders.length} 单`;
+
+      document.getElementById(
+        "todaySales"
+      ).textContent = `¥${roundMoney(todaySales)}`;
+
+      document.getElementById(
+        "todayReceived"
+      ).textContent = `¥${roundMoney(todayReceived)}`;
+    }
+
+    function deleteOrder(orderId) {
+      const confirmed = confirm(
+        "确定删除这张订单吗？删除后老板端也不会再统计这张订单。"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      orders = orders.filter((order) => {
+        const currentId =
+          order.id ||
+          order.orderNo ||
+          order.编号;
+
+        return String(currentId) !== String(orderId);
+      });
+
+      saveOrders();
+      renderTodayOrders();
+      updateHeaderSummary();
+      showToast("订单已删除");
+    }
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(value || "");
+      }
+
+      return date.toLocaleString("zh-CN");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(showToast.timer);
+
+      showToast.timer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    function scrollToOrder() {
+      document
+        .getElementById("orderSection")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      setBottomActive("order");
+    }
+
+    function scrollToToday() {
+      document
+        .getElementById("todaySection")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      setBottomActive("today");
+    }
+
+    function setBottomActive(type) {
+      document
+        .getElementById("bottomOrderButton")
+        .classList.toggle("active", type === "order");
+
+      document
+        .getElementById("bottomTodayButton")
+        .classList.toggle("active", type === "today");
+    }
+
+    function openBossPage() {
+      window.location.href = "admin.html";
+    }
+
+    window.addEventListener("storage", function (event) {
+      if (event.key === STORAGE_KEY) {
+        orders = loadOrders();
+        renderTodayOrders();
+        updateHeaderSummary();
+      }
+    });
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        orders = loadOrders();
+        renderTodayOrders();
+        updateHeaderSummary();
+      }
+    });
+
+    initializePage();
+  </script>
 </body>
-
 </html>
