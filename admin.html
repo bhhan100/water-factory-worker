@@ -1,61 +1,197 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>水厂管家老板端</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <style>
 
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
-background:#f5f7fb;
+*{
+box-sizing:border-box;
 }
+
+
+body{
+
+margin:0;
+
+font-family:
+-apple-system,
+BlinkMacSystemFont,
+"PingFang SC";
+
+background:#f5f7fb;
+
+}
+
+
+
+/* 顶部 */
 
 .header{
+
 background:#1677ff;
+
 color:white;
+
 padding:25px;
+
 border-radius:0 0 25px 25px;
+
 }
+
+
+
+.header h2{
+
+margin:0;
+
+}
+
+
+
+/* 左侧菜单 */
+
+
+.menu{
+
+position:fixed;
+
+top:0;
+
+left:-260px;
+
+width:260px;
+
+height:100%;
+
+background:white;
+
+z-index:10;
+
+padding:25px;
+
+transition:.3s;
+
+box-shadow:2px 0 10px #aaa;
+
+}
+
+
+.menu.open{
+
+left:0;
+
+}
+
+
+.menu-item{
+
+padding:16px 0;
+
+border-bottom:1px solid #eee;
+
+}
+
+
+
+.mask{
+
+position:fixed;
+
+inset:0;
+
+background:#0006;
+
+display:none;
+
+z-index:5;
+
+}
+
+
+.mask.show{
+
+display:block;
+
+}
+
+
+
+
 
 .card{
+
 background:white;
+
 margin:15px;
+
 padding:20px;
+
 border-radius:20px;
+
 }
+
+
 
 .grid{
+
 display:grid;
+
 grid-template-columns:1fr 1fr;
-gap:10px;
+
+gap:12px;
+
 }
+
+
 
 .box{
+
 background:#eef6ff;
+
 padding:15px;
+
 border-radius:15px;
+
 }
 
+
+
 .number{
-font-size:25px;
+
+font-size:26px;
+
 font-weight:bold;
+
 color:#1677ff;
+
 }
+
 
 
 button{
 
 width:100%;
-padding:15px;
+
+padding:14px;
+
+border:0;
+
 border-radius:12px;
-border:none;
+
 background:#1677ff;
+
 color:white;
+
 font-size:16px;
 
 }
@@ -63,42 +199,115 @@ font-size:16px;
 
 .item{
 
+padding:12px 0;
+
 border-bottom:1px solid #eee;
-padding:15px 0;
 
 }
 
 
-.red{
+canvas{
 
-color:red;
-font-weight:bold;
+max-height:260px;
 
 }
+
 
 </style>
 
 </head>
 
 
+
 <body>
 
 
+<!-- 菜单 -->
 
-<div class="header">
+<div class="menu" id="menu">
 
-<h2>💧 水厂管家</h2>
 
-<p>老板管理后台 V0.2</p>
+<h3>☰ 管理中心</h3>
+
+
+<div class="menu-item">
+📊 经营分析
+</div>
+
+
+<div class="menu-item">
+🥧 销售分析
+</div>
+
+
+<div class="menu-item">
+👥 客户管理
+</div>
+
+
+<div class="menu-item">
+💰 欠款管理
+</div>
+
+
+<div class="menu-item">
+📦 库存管理
+</div>
+
+
+<div class="menu-item">
+📥 Excel导出
+</div>
+
+
+<div class="menu-item">
+⚙ 设置
+</div>
+
+
+</div>
+
+
+
+<div class="mask" id="mask"
+onclick="closeMenu()">
 
 </div>
 
 
 
 
+
+<div class="header">
+
+
+<h2 onclick="openMenu()">
+
+☰ 💧 水厂管家
+
+</h2>
+
+
+<p>
+
+老板数据中心 V0.3
+
+</p>
+
+
+</div>
+
+
+
+
+
 <div class="card">
 
-<h3>📊 今日经营</h3>
+
+<h3>
+📊 今日经营
+</h3>
+
 
 
 <div class="grid">
@@ -106,21 +315,26 @@ font-weight:bold;
 
 <div class="box">
 
-营业额
+今日收入
 
-<div id="money" class="number">
+<div class="number" id="money">
+
 ¥0
+
 </div>
 
 </div>
+
 
 
 <div class="box">
 
-订单
+订单数量
 
-<div id="count" class="number">
+<div class="number" id="count">
+
 0
+
 </div>
 
 </div>
@@ -131,8 +345,10 @@ font-weight:bold;
 
 未收款
 
-<div id="debt" class="number">
+<div class="number" id="debt">
+
 ¥0
+
 </div>
 
 </div>
@@ -141,29 +357,16 @@ font-weight:bold;
 
 <div class="box">
 
-商品数量
+销售数量
 
-<div id="num" class="number">
+<div class="number" id="sale">
+
 0
-</div>
 
 </div>
 
-
 </div>
 
-
-</div>
-
-
-
-
-
-<div class="card">
-
-<h3>📦 产品销售</h3>
-
-<div id="products">
 
 </div>
 
@@ -176,40 +379,89 @@ font-weight:bold;
 
 <div class="card">
 
-<h3>💰 欠款客户</h3>
+
+<h3>
+📈 收入趋势
+</h3>
+
+
+<canvas id="incomeChart"></canvas>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>
+🥧 产品销量占比
+</h3>
+
+
+<canvas id="productChart"></canvas>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>
+👥 客户销售占比
+</h3>
+
+
+<canvas id="customerChart"></canvas>
+
+
+</div>
+
+
+
+
+
+<div class="card">
+
+
+<h3>
+💰 欠款客户
+
+</h3>
+
 
 <div id="debts">
 
+暂无
+
 </div>
 
 
 </div>
+
 
 
 
 
 <div class="card">
 
-<h3>📥 数据导出</h3>
 
-<button onclick="exportExcel()">
+<h3>
+📋 最近订单
 
-导出Excel销售记录
+</h3>
 
-</button>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>📋 全部订单</h3>
 
 <div id="orders">
 
-暂无订单
+暂无
 
 </div>
 
@@ -218,20 +470,66 @@ font-weight:bold;
 <script>
 
 
+// =====================
+// 菜单控制
+// =====================
+
+
+function openMenu(){
+
+document.getElementById("menu")
+.classList.add("open");
+
+
+document.getElementById("mask")
+.classList.add("show");
+
+
+}
+
+
+
+function closeMenu(){
+
+document.getElementById("menu")
+.classList.remove("open");
+
+
+document.getElementById("mask")
+.classList.remove("show");
+
+
+}
+
+
+
+
+
+// =====================
+// 读取订单
+// =====================
+
+
 let orders =
-JSON.parse(localStorage.getItem("orders")||"[]");
+JSON.parse(
+localStorage.getItem("orders") || "[]"
+);
 
 
 
 
-// 数据统计
 
-function analysis(){
+// =====================
+// 数据分析
+// =====================
 
 
-let money=0;
+let totalMoney=0;
 
-let debt=0;
+let totalDebt=0;
+
+let totalSale=0;
+
 
 
 let products={
@@ -252,39 +550,63 @@ let products={
 
 
 
-let debtList={};
+let customers={};
+
+
+
+let debts={};
+
+
 
 
 
 orders.forEach(o=>{
 
 
-money += Number(o.金额);
+totalMoney += Number(o.金额);
 
 
 
 if(o.付款!="已付款"){
 
-debt += Number(o.金额);
+totalDebt += Number(o.金额);
 
 
 
-if(!debtList[o.客户]){
+if(!debts[o.客户]){
 
-debtList[o.客户]=0;
+debts[o.客户]=0;
+
+}
+
+
+debts[o.客户]+=Number(o.金额);
+
 
 }
 
 
-debtList[o.客户]+=Number(o.金额);
 
+
+
+if(!customers[o.客户]){
+
+customers[o.客户]=0;
 
 }
+
+
+customers[o.客户]+=Number(o.金额);
+
 
 
 
 
 o.商品.forEach(p=>{
+
+
+totalSale += Number(p.qty);
+
 
 
 if(products[p.product]!=undefined){
@@ -294,90 +616,236 @@ products[p.product]+=Number(p.qty);
 }
 
 
-});
-
 
 });
 
 
 
+});
 
 
-// 首页数据
+
+
+
+
+
+// 首页数字
+
 
 document.getElementById("money")
-.innerHTML="¥"+money;
+.innerHTML=
+"¥"+totalMoney;
+
 
 
 document.getElementById("count")
-.innerHTML=orders.length;
+.innerHTML=
+orders.length;
+
 
 
 document.getElementById("debt")
-.innerHTML="¥"+debt;
-
-
-document.getElementById("num")
 .innerHTML=
-Object.values(products)
-.reduce((a,b)=>a+b,0);
+"¥"+totalDebt;
+
+
+
+document.getElementById("sale")
+.innerHTML=
+totalSale;
 
 
 
 
 
 
-// 产品统计
 
-let productHTML="";
-
-
-for(let p in products){
+// =====================
+// 产品饼图
+// =====================
 
 
-productHTML+=`
+new Chart(
 
-<div class="item">
+document
+.getElementById("productChart"),
 
-${p}
+{
 
-：
 
-${products[p]}
+type:"pie",
 
-</div>
 
-`;
+data:{
+
+
+labels:Object.keys(products),
+
+
+datasets:[{
+
+data:Object.values(products)
+
+}]
+
 
 }
 
 
-document.getElementById("products")
-.innerHTML=
-productHTML;
+}
+
+);
 
 
 
 
 
 
-// 欠款客户
+
+
+
+// =====================
+// 客户饼图
+// =====================
+
+
+new Chart(
+
+document
+.getElementById("customerChart"),
+
+{
+
+
+type:"pie",
+
+
+data:{
+
+
+labels:Object.keys(customers),
+
+
+datasets:[{
+
+data:Object.values(customers)
+
+}]
+
+
+}
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+// =====================
+// 收入趋势图
+// =====================
+
+
+let days={};
+
+
+
+orders.forEach(o=>{
+
+
+let d=o.时间.split(" ")[0];
+
+
+if(!days[d]){
+
+days[d]=0;
+
+}
+
+
+days[d]+=Number(o.金额);
+
+
+});
+
+
+
+
+
+new Chart(
+
+document
+.getElementById("incomeChart"),
+
+{
+
+
+type:"line",
+
+
+data:{
+
+
+labels:Object.keys(days),
+
+
+datasets:[{
+
+label:"收入",
+
+data:Object.values(days),
+
+tension:0.3
+
+}]
+
+
+}
+
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+
+// =====================
+// 欠款列表
+// =====================
+
 
 let debtHTML="";
 
 
-for(let c in debtList){
+for(let c in debts){
 
 
 debtHTML+=`
 
-<div class="item red">
+<div class="item">
 
 ${c}
 
 欠款：
 
-¥${debtList[c]}
+<b>
+¥${debts[c]}
+</b>
 
 </div>
 
@@ -386,21 +854,10 @@ ${c}
 }
 
 
-
 document.getElementById("debts")
 .innerHTML=
-debtHTML||"暂无欠款";
 
-
-
-
-
-
-showOrders();
-
-
-
-}
+debtHTML || "暂无欠款";
 
 
 
@@ -409,17 +866,18 @@ showOrders();
 
 
 
-// 显示订单
-
-function showOrders(){
 
 
-let html="";
+// =====================
+// 最近订单
+// =====================
 
 
-orders
-.slice()
-.reverse()
+let orderHTML="";
+
+
+
+orders.slice().reverse()
 .forEach(o=>{
 
 
@@ -430,7 +888,6 @@ o.商品.forEach(p=>{
 
 
 goods+=
-
 p.product+
 " × "+
 p.qty+
@@ -443,35 +900,14 @@ p.unit+
 
 
 
-html+=`
+orderHTML+=`
 
 <div class="item">
 
 
-订单号：
-
-${o.编号}
-
-<br>
-
-
-时间：
-
-${o.时间}
-
-<br>
-
-
-工人：
-
-${o.工人}
-
-<br>
-
-
 客户：
-
 ${o.客户}
+
 
 <br>
 
@@ -487,12 +923,14 @@ ${goods}
 
 ¥${o.金额}
 
+
 <br>
 
 
 付款：
 
 ${o.付款}
+
 
 
 </div>
@@ -509,10 +947,7 @@ ${o.付款}
 document.getElementById("orders")
 .innerHTML=
 
-html||"暂无订单";
-
-
-}
+orderHTML||"暂无订单";
 
 
 
@@ -521,14 +956,16 @@ html||"暂无订单";
 
 
 
-// 导出Excel
+
+// =====================
+// Excel导出
+// =====================
+
 
 function exportExcel(){
 
 
-
 let csv=
-
 "订单号,时间,工人,客户,商品,金额,付款\n";
 
 
@@ -543,38 +980,30 @@ o.商品.forEach(p=>{
 
 
 goods+=
-
 p.product+
 "×"+
 p.qty+
 p.unit+
 " ";
 
-
 });
 
 
 
-csv +=
+csv+=
 
 o.编号+
 ","+
-
 o.时间+
 ","+
-
 o.工人+
 ","+
-
 o.客户+
 ","+
-
 goods+
 ","+
-
 o.金额+
 ","+
-
 o.付款+
 "\n";
 
@@ -584,23 +1013,18 @@ o.付款+
 
 
 
-
-let blob=new Blob(
+let blob=
+new Blob(
 
 [
 "\ufeff"+csv
 ],
 
 {
-
-type:
-"text/csv;charset=utf-8"
-
+type:"text/csv;charset=utf-8"
 }
 
 );
-
-
 
 
 
@@ -617,20 +1041,15 @@ a.href=url;
 
 
 a.download=
-"水厂销售记录.csv";
+"水厂经营日报.csv";
 
 
 a.click();
 
 
-
 }
 
 
-
-
-
-analysis();
 
 
 </script>
