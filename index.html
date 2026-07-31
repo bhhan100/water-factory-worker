@@ -5,7 +5,9 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
 
 <title>水厂管家</title>
 
@@ -21,14 +23,15 @@ body{
 
 margin:0;
 
+background:#f5f7fb;
+
 font-family:
 -apple-system,
 BlinkMacSystemFont,
 "PingFang SC";
 
-background:#f5f7fb;
-
 }
+
 
 
 .header{
@@ -45,6 +48,14 @@ border-radius:0 0 25px 25px;
 
 
 
+.header h2{
+
+margin:0;
+
+}
+
+
+
 .card{
 
 background:white;
@@ -54,38 +65,6 @@ margin:15px;
 padding:18px;
 
 border-radius:20px;
-
-box-shadow:
-0 5px 20px #00000010;
-
-}
-
-
-
-input,
-button{
-
-width:100%;
-
-padding:14px;
-
-border-radius:14px;
-
-border:1px solid #ddd;
-
-font-size:16px;
-
-}
-
-
-
-button{
-
-border:none;
-
-background:#1677ff;
-
-color:white;
 
 }
 
@@ -98,6 +77,36 @@ font-size:18px;
 font-weight:bold;
 
 margin-bottom:15px;
+
+}
+
+
+
+input{
+
+width:100%;
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid #ddd;
+
+font-size:16px;
+
+}
+
+
+
+.history div{
+
+padding:8px;
+
+background:#f2f6ff;
+
+margin-top:5px;
+
+border-radius:10px;
 
 }
 
@@ -124,11 +133,9 @@ color:#1677ff;
 
 padding:15px 5px;
 
-text-align:center;
-
 border-radius:15px;
 
-font-size:14px;
+text-align:center;
 
 }
 
@@ -139,8 +146,6 @@ font-size:14px;
 display:block;
 
 font-size:25px;
-
-margin-bottom:5px;
 
 }
 
@@ -158,9 +163,21 @@ background:#fafafa;
 
 padding:12px;
 
+border-radius:15px;
+
 margin-top:10px;
 
-border-radius:15px;
+}
+
+
+
+.counter{
+
+display:flex;
+
+gap:8px;
+
+align-items:center;
 
 }
 
@@ -170,14 +187,25 @@ border-radius:15px;
 
 width:35px;
 
-padding:8px;
+height:35px;
+
+border:0;
+
+background:#1677ff;
+
+color:white;
+
+border-radius:10px;
+
+font-size:20px;
 
 }
 
 
+
 .money{
 
-font-size:28px;
+font-size:30px;
 
 font-weight:bold;
 
@@ -191,18 +219,24 @@ color:#1677ff;
 
 display:grid;
 
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:
+repeat(3,1fr);
 
 gap:8px;
 
 }
 
 
+
 .pay button{
 
-background:#eee;
+padding:12px;
 
-color:#333;
+border:0;
+
+border-radius:12px;
+
+background:#eee;
 
 }
 
@@ -220,9 +254,19 @@ color:white;
 
 .submit{
 
+width:100%;
+
+padding:16px;
+
 margin-top:15px;
 
-height:55px;
+border:0;
+
+border-radius:15px;
+
+background:#1677ff;
+
+color:white;
 
 font-size:18px;
 
@@ -230,21 +274,9 @@ font-size:18px;
 
 
 
-.history{
-
-font-size:14px;
-
-color:#666;
-
-}
-
-
-
 </style>
 
-
 </head>
-
 
 
 <body>
@@ -254,7 +286,7 @@ color:#666;
 
 <h2>💧 水厂管家</h2>
 
-<p>工人送货端 V2.1</p>
+<p>出库登记端 V2.2</p>
 
 </div>
 
@@ -263,12 +295,12 @@ color:#666;
 
 
 <div class="title">
-👷 工人
+👷 操作员
 </div>
 
 
 <input id="worker"
-placeholder="请输入姓名">
+placeholder="姓名">
 
 
 </div>
@@ -284,11 +316,10 @@ placeholder="请输入姓名">
 
 
 <input id="customer"
-placeholder="输入客户名称">
+placeholder="客户名称">
 
 
-<div id="history"
-class="history"></div>
+<div id="history"></div>
 
 
 </div>
@@ -299,7 +330,7 @@ class="history"></div>
 
 
 <div class="title">
-🚚 选择商品
+🚚 选择出货商品
 </div>
 
 
@@ -333,7 +364,6 @@ onclick="addProduct('循环桶')">
 </div>
 
 
-
 <div class="product"
 onclick="addProduct('循环桶回桶')">
 
@@ -341,7 +371,6 @@ onclick="addProduct('循环桶回桶')">
 回桶
 
 </div>
-
 
 
 <div class="product"
@@ -353,7 +382,6 @@ onclick="addProduct('一次性')">
 </div>
 
 
-
 <div class="product"
 onclick="addProduct('定制水')">
 
@@ -363,8 +391,8 @@ onclick="addProduct('定制水')">
 </div>
 
 
-
 </div>
+
 
 
 <div id="cart">
@@ -378,18 +406,17 @@ onclick="addProduct('定制水')">
 
 
 
-
 <div class="card">
 
 
 <div class="title">
-💰 本单金额
+💰 成交金额
 </div>
 
 
 <div class="money">
 
-¥ <span id="amount">
+¥ <span id="showMoney">
 0
 </span>
 
@@ -399,14 +426,17 @@ onclick="addProduct('定制水')">
 <br>
 
 
-<input id="moneyInput"
+<input
+id="money"
 type="number"
 placeholder="输入实际收款金额">
 
 
 
 <div class="title">
+
 付款状态
+
 </div>
 
 
@@ -417,7 +447,7 @@ placeholder="输入实际收款金额">
 id="paid"
 onclick="setPay('已付款')">
 
-已付款
+已付
 
 </button>
 
@@ -447,14 +477,17 @@ onclick="setPay('未付款')">
 <br>
 
 
-<input id="remark"
+<input
+id="remark"
 placeholder="备注">
 
 
-<button class="submit"
+
+<button
+class="submit"
 onclick="submitOrder()">
 
-提交订单
+提交出库
 
 </button>
 
@@ -462,59 +495,35 @@ onclick="submitOrder()">
 </div>
 
 
-
 <script>
-
 
 let cart=[];
 
 let payStatus="已付款";
-
-
-</script>
-
-
-</body>
-
-</html>
-<script>
-
-let cart = [];
-
-let payStatus = "已付款";
-
-
 // ======================
-// 数据
+// 读取订单数据
 // ======================
 
-let orders =
+let orders = 
 JSON.parse(
 localStorage.getItem("orders") || "[]"
 );
 
 
 // ======================
-// 初始化
+// 初始化记忆
 // ======================
 
 let oldWorker =
 localStorage.getItem("workerName");
 
+
 if(oldWorker){
 
-document.getElementById("worker").value=
+document.getElementById("worker").value =
 oldWorker;
 
 }
-
-
-// 客户输入提示
-
-document
-.getElementById("customer")
-.addEventListener("input",showHistory);
-
 
 
 
@@ -531,6 +540,7 @@ i=>i.product==name
 );
 
 
+
 if(item){
 
 item.qty++;
@@ -544,10 +554,19 @@ product:name,
 
 qty:1,
 
+
 unit:
-name=="循环桶回桶"?
-"个":
+name=="循环桶回桶"
+?
+"个"
+:
+(
+name=="普苏"
+?
 "桶"
+:
+"箱"
+)
 
 
 });
@@ -564,7 +583,7 @@ renderCart();
 
 
 // ======================
-// 显示购物车
+// 显示商品
 // ======================
 
 
@@ -590,8 +609,7 @@ ${item.product}
 
 <br>
 
-${item.qty}
-${item.unit}
+${item.qty}${item.unit}
 
 </div>
 
@@ -604,6 +622,11 @@ ${item.unit}
 </button>
 
 
+<span>
+${item.qty}
+</span>
+
+
 <button onclick="changeQty(${index},1)">
 +
 </button>
@@ -614,6 +637,7 @@ ${item.unit}
 
 </div>
 
+
 `;
 
 
@@ -622,10 +646,8 @@ ${item.unit}
 
 
 
-document.getElementById("cart")
-.innerHTML =
+document.getElementById("cart").innerHTML =
 html || "暂无商品";
-
 
 
 }
@@ -633,7 +655,7 @@ html || "暂无商品";
 
 
 // ======================
-// 数量修改
+// 数量调整
 // ======================
 
 
@@ -680,23 +702,32 @@ b=>b.classList.remove("active")
 
 if(status=="已付款"){
 
-paid.classList.add("active");
+document
+.getElementById("paid")
+.classList.add("active");
 
 }
+
 
 
 if(status=="部分付款"){
 
-part.classList.add("active");
+document
+.getElementById("part")
+.classList.add("active");
 
 }
+
 
 
 if(status=="未付款"){
 
-unpaid.classList.add("active");
+document
+.getElementById("unpaid")
+.classList.add("active");
 
 }
+
 
 
 }
@@ -708,10 +739,19 @@ unpaid.classList.add("active");
 // ======================
 
 
+document
+.getElementById("customer")
+.addEventListener(
+"input",
+showHistory
+);
+
+
+
 function showHistory(){
 
 
-let text =
+let value =
 document
 .getElementById("customer")
 .value;
@@ -723,7 +763,7 @@ document.getElementById("history");
 
 
 
-if(!text){
+if(!value){
 
 box.innerHTML="";
 
@@ -734,29 +774,28 @@ return;
 
 
 let customers =
-[...new Set(
-
+[
+...new Set(
 orders.map(
 o=>o.客户
 )
-
-)];
+)
+];
 
 
 
 let result =
 customers.filter(
-c=>c.includes(text)
+c=>c.includes(value)
 );
 
 
 
 box.innerHTML =
+
 result.map(
 
-c=>
-
-`
+c=>`
 
 <div onclick="chooseCustomer('${c}')">
 
@@ -792,6 +831,31 @@ document
 
 
 // ======================
+// 金额显示
+// ======================
+
+
+document
+.getElementById("money")
+.addEventListener(
+"input",
+function(){
+
+
+document
+.getElementById("showMoney")
+.innerHTML =
+this.value || 0;
+
+
+}
+
+);
+
+
+
+
+// ======================
 // 提交订单
 // ======================
 
@@ -803,21 +867,23 @@ function submitOrder(){
 let worker =
 document
 .getElementById("worker")
-.value.trim();
+.value
+.trim();
 
 
 
 let customer =
 document
 .getElementById("customer")
-.value.trim();
+.value
+.trim();
 
 
 
 let money =
 Number(
 document
-.getElementById("moneyInput")
+.getElementById("money")
 .value
 );
 
@@ -825,7 +891,7 @@ document
 
 if(!worker){
 
-alert("请输入工人姓名");
+alert("请输入操作员");
 
 return;
 
@@ -867,10 +933,8 @@ return;
 let order={
 
 
-
 编号:
 Date.now(),
-
 
 
 时间:
@@ -915,8 +979,6 @@ document
 
 
 
-
-
 orders.push(order);
 
 
@@ -931,7 +993,7 @@ JSON.stringify(orders)
 
 
 
-// 保存工人
+// 保存操作员
 
 localStorage.setItem(
 
@@ -943,13 +1005,11 @@ worker
 
 
 
-
-alert("订单提交成功");
+alert("出库成功");
 
 
 
 // 清空
-
 
 cart=[];
 
@@ -960,7 +1020,7 @@ document
 
 
 document
-.getElementById("moneyInput")
+.getElementById("money")
 .value="";
 
 
@@ -969,39 +1029,23 @@ document
 .value="";
 
 
+document
+.getElementById("showMoney")
+.innerHTML="0";
+
+
+
 renderCart();
 
 
-
 }
 
-
-
-// ======================
-// 点击金额实时显示
-// ======================
-
-
-document
-.getElementById("moneyInput")
-.addEventListener(
-
-"input",
-
-function(){
-
-
-document
-.getElementById("amount")
-.innerHTML=
-
-this.value || 0;
-
-
-}
-
-);
 
 
 
 </script>
+
+
+</body>
+
+</html>
